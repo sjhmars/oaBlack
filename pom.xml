@@ -19,6 +19,7 @@
         <swagger.version>3.0.0</swagger.version>
         <fastjson.version>1.2.76</fastjson.version>
         <jwt.version>1.1.1.RELEASE</jwt.version>
+        <hutool.version>5.3.2</hutool.version>
     </properties>
     <dependencies>
         <dependency>
@@ -77,7 +78,11 @@
             <artifactId>spring-security-jwt</artifactId>
             <version>${jwt.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
