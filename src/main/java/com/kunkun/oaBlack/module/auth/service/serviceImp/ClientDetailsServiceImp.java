@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ClientDetailsServiceImp implements ClientDetailsService {
@@ -21,12 +22,13 @@ public class ClientDetailsServiceImp implements ClientDetailsService {
         BaseClientDetails clientDetails = new BaseClientDetails(); //系统默认实现的ClientDetails子类
         clientDetails.setClientId("client_sjh"); // 此为demo正常应该是随机生成
         clientDetails.setClientSecret("hello"); // 客户端密码需要加密处理。
-        clientDetails.setAuthorizedGrantTypes(Arrays.asList("authorization_code"));
+        clientDetails.setAuthorizedGrantTypes(Arrays.asList("authorization_code","password"));
         clientDetails.setScope(Arrays.asList("webapp"));
-        clientDetails.setAccessTokenValiditySeconds(3000);
+        clientDetails.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(1)); //一天有效期
+        // clientDetails.setAccessTokenValiditySeconds(3000);
         clientDetails.setAutoApproveScopes(clientDetails.getScope()); // 自动处理授权访问
         Set<String> redirectSet = new HashSet<>();
-        redirectSet.addAll(Arrays.asList("https://www.baidu.com"));
+        redirectSet.addAll(Arrays.asList("http://localhost:9999/oauth/test"));
         clientDetails.setRegisteredRedirectUri(redirectSet); // 配置已认证返回路径
         return clientDetails;
     }

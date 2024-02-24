@@ -19,17 +19,6 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     call-setters-on-nulls: true
     map-underscore-to-camel-case: true
-#  security:
-#    oauth2:
-#      registration:
-#        client-id-1:
-#          client-id: client_sjh
-#          client-secret: hello
-#          authorization-grant-type: authorization_code
-#          redirect-uri: 'https://www.baidu.com'
-#          #            client-authentication-method: POST
-#          scope: webapp
-#          client-name: sjh
 server:
    port: 9999
 

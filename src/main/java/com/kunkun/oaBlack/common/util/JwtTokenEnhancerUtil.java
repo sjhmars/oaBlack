@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT增强类
+ * JWT增强类,增强jwt中存放的东西。把userId放入其中
  */
 @Component
 public class JwtTokenEnhancerUtil implements TokenEnhancer {
@@ -20,7 +20,8 @@ public class JwtTokenEnhancerUtil implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
         LoginDao loginDao = (LoginDao) oAuth2Authentication.getPrincipal();
         Map<String,Object> objectMap = new HashMap<>();
-        objectMap.put("id",loginDao.getId());
+        objectMap.put("userid",loginDao.getId());
+        objectMap.put("userDao",loginDao);
         ((DefaultOAuth2AccessToken)oAuth2AccessToken).setAdditionalInformation(objectMap);
         return oAuth2AccessToken;
     }

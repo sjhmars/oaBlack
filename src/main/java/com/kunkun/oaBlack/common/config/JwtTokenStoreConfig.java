@@ -33,7 +33,7 @@ public class JwtTokenStoreConfig {
                 String tokenValue = token.getValue();
                 if (token.getAdditionalInformation().containsKey("jti")){
                     String jti = token.getAdditionalInformation().get("jti").toString();
-                    redisCache.setCacheObject(TOKEN_KEY+jti,token.getValue(),token.getExpiresIn(), TimeUnit.SECONDS);
+                    redisCache.setCacheObject(TOKEN_KEY+jti,tokenValue,token.getExpiresIn(), TimeUnit.SECONDS);
                 }
             }
 
