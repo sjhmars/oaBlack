@@ -5,56 +5,58 @@ public class BizException extends RuntimeException {
     protected  Integer code;
     protected String  msg;
 
-    public BizException(){
+    public BizException() {
         super();
     }
 
-    public BizException(BaseErrorInfoInterface errorInfo){
-        super(errorInfo.getResultCode().toString());
-        this.code = errorInfo.getResultCode();
-        this.msg = errorInfo.getResultMessage();
+    public BizException(BaseErrorInfoInterface errorInfoInterface) {
+        super(errorInfoInterface.getResultCode().toString());
+        this.code = errorInfoInterface.getResultCode();
+        this.msg = errorInfoInterface.getResultMessage();
     }
 
-    public BizException(BaseErrorInfoInterface baseErrorInfoInterface, Throwable cause){
-        super(baseErrorInfoInterface.getResultCode().toString(),cause);
-        this.msg = baseErrorInfoInterface.getResultMessage();
-        this.code = baseErrorInfoInterface.getResultCode();
+    public BizException(BaseErrorInfoInterface errorInfoInterface, Throwable cause) {
+        super(errorInfoInterface.getResultCode().toString(), cause);
+        this.code = errorInfoInterface.getResultCode();
+        this.msg = errorInfoInterface.getResultMessage();
     }
 
-    public BizException(String msg){
-        super(msg);
-        this.msg = msg;
+    public BizException(String errorMsg) {
+        super(errorMsg);
+        this.msg = errorMsg;
     }
 
-    public BizException(Integer code,String msg){
-        super(code.toString());
-        this.code = code;
-        this.msg = msg;
+    public BizException(Integer errorCode, String errorMsg) {
+        super(errorCode.toString());
+        this.code = errorCode;
+        this.msg = errorMsg;
     }
+
     public BizException(Integer errorCode, String errorMsg, Throwable cause) {
         super(errorCode.toString(), cause);
         this.code = errorCode;
         this.msg = errorMsg;
     }
 
-    public Integer getCode() {
+
+    public Integer getErrorCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setErrorCode(Integer errorCode) {
+        this.code = errorCode;
     }
 
-    public String getMsg() {
+    public String getErrorMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setErrorMsg(String errorMsg) {
+        this.msg = errorMsg;
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace() {
+    public Throwable fillInStackTrace() {
         return this;
     }
 }
