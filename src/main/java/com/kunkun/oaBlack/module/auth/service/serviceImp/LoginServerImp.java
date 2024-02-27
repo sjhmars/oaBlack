@@ -46,6 +46,6 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         if (result.getStatusCode()!= HttpStatus.OK){
             return ResultUtil.faile("登录失败");
         }
-        return ResultUtil.success("登录成功");
+        return ResultUtil.success("登录成功",result);
     }
 }

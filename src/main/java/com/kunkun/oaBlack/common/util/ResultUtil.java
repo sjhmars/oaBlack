@@ -53,6 +53,15 @@ public class ResultUtil<T> {
         return r;
     }
 
+    public static <T>ResultUtil<T> success(String msg, T data){
+        ResultUtil<T> r  = new ResultUtil<>();
+        r.setCode(CodeUtil.SUCCESS.getResultCode());
+        r.setMsg(msg);
+        r.setSuccess(true);
+        r.setData(data);
+        return r;
+    }
+
     public static <T>ResultUtil<T> faile(BaseErrorInfoInterface errorInfo){
         ResultUtil<T> r = new ResultUtil<>();
         r.setCode(errorInfo.getResultCode());

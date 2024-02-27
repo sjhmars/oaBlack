@@ -24,7 +24,6 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEnity userEnity = userMapper.selectOne(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getMobile,username));
-        System.out.println(userEnity);
         LoginDao loginUser = new LoginDao();
         if (ObjectUtil.isEmpty(userEnity)){
             throw new RuntimeException("用户不存在");
