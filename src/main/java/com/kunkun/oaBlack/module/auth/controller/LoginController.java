@@ -54,4 +54,10 @@ public class LoginController {
         }
         return loginService.login(userDao);
     }
+
+    @ApiOperation("退出登录")
+    @PostMapping("/loginOut")
+    public ResultUtil loginOut(){
+        return ResultUtil.success();
+    }
 }

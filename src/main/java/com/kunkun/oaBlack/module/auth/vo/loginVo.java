@@ -2,6 +2,8 @@ package com.kunkun.oaBlack.module.auth.vo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class loginVo {
     
@@ -12,4 +14,8 @@ public class loginVo {
     private String roleName;
 
     private String nickname;
+
+    private Long lastLoginTime;
+
+    private String lastLoginAddress;
 }

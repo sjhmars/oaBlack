@@ -21,7 +21,7 @@ public class JwtTokenEnhancerUtil implements TokenEnhancer {
         LoginDao loginDao = (LoginDao) oAuth2Authentication.getPrincipal();
         Map<String,Object> objectMap = new HashMap<>();
         objectMap.put("userid",loginDao.getId());
-        objectMap.put("userDao",loginDao);
+//        objectMap.put("userDao",loginDao);
         ((DefaultOAuth2AccessToken)oAuth2AccessToken).setAdditionalInformation(objectMap);
         return oAuth2AccessToken;
     }

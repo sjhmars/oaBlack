@@ -1,5 +1,6 @@
 package com.kunkun.oaBlack.module.auth.service.serviceImp;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.CodeUtil;
@@ -56,15 +57,24 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
             throw new BizException(CodeUtil.INTERNAL_SERVER_ERROR.getResultCode(),CodeUtil.INTERNAL_SERVER_ERROR.getResultMessage(),e);
         }
         if (result.getStatusCode()!= HttpStatus.OK){
+            log.error("密码模式挂了",new RuntimeException());
             return ResultUtil.faile("登录失败,密码模式挂了");
         }
         UserEnity userEnity = userService.selectById((Integer) resultMap.get("userid"));
-//        System.out.println(userEnity.getMobile());
         loginVo login_vo = new loginVo();
+        login_vo.setLastLoginAddress(userEnity.getLastLoginAddress());
+        userEnity.setLastLoginAddress(userDao.getLoginAddress());
+//        System.out.println(userEnity.getMobile());
         login_vo.setAccess_token(accessToken);
         login_vo.setUserName(userEnity.getUserName());
         login_vo.setNickname(userEnity.getNickname());
         login_vo.setRoleName(userEnity.getRoleName());
+        if (ObjectUtil.isNotEmpty(userService.updateLoginTimeAndAddress(userEnity))){
+            log.debug("登录时间和登录地点更新成功");
+        }else{
+            log.warn("登录时间和登录地点更新失败");
+        }
+        login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
         return ResultUtil.success("登录成功",login_vo);
     }
 }

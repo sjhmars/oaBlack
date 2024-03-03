@@ -1,5 +1,6 @@
 package com.kunkun.oaBlack.module.auth.enity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -17,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_user")
-public class UserEnity implements Serializable {
+public class UserEnity implements Serializable{
 
     @TableId(type = IdType.AUTO)
     @TableField(value = "user_id")
@@ -40,7 +41,6 @@ public class UserEnity implements Serializable {
     private Integer updateId;
 
     @TableField(value = "update_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updateTime;
 
     @TableField(value = "address")
@@ -61,6 +61,9 @@ public class UserEnity implements Serializable {
     @TableField(value = "status")
     private Integer status;
 
+    @TableField(value = "birth")
+    private Date birth;
+
     @TableField(value = "role_ids")
     private String roleIds;
 
@@ -78,4 +81,10 @@ public class UserEnity implements Serializable {
 
     @TableField(value = "nickname")
     private String nickname;
+
+    @TableField(value = "last_login_time")
+    private Date lastLoginTime;
+
+    @TableField(value = "last_login_address")
+    private String lastLoginAddress;
 }
