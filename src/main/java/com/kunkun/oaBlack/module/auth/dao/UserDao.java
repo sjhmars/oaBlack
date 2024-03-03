@@ -15,4 +15,7 @@ public class UserDao {
 
     @NotEmpty
     private String userPassword;
+//
+//    @NotEmpty
+//    private String loginAddress;
 }

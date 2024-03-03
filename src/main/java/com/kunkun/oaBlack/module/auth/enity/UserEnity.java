@@ -10,13 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_user")
-public class UserEnity {
+public class UserEnity implements Serializable {
 
     @TableId(type = IdType.AUTO)
     @TableField(value = "user_id")

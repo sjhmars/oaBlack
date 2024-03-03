@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.kunkun.oaBlack.module.auth.dao.LoginDao;
 import com.kunkun.oaBlack.module.auth.enity.UserEnity;
 import com.kunkun.oaBlack.module.auth.mapper.UserMapper;
+import com.kunkun.oaBlack.module.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,11 +20,11 @@ import java.util.stream.Stream;
 public class UserDetailServiceImp implements UserDetailsService {
 
     @Autowired
-    UserMapper userMapper;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEnity userEnity = userMapper.selectOne(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getMobile,username));
+        UserEnity userEnity = userService.getOne(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getMobile,username));
         LoginDao loginUser = new LoginDao();
         if (ObjectUtil.isEmpty(userEnity)){
             throw new RuntimeException("用户不存在");

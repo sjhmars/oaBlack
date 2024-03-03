@@ -8,6 +8,9 @@ import com.kunkun.oaBlack.module.auth.dao.UserDao;
 import com.kunkun.oaBlack.module.auth.enity.UserEnity;
 import com.kunkun.oaBlack.module.auth.mapper.UserMapper;
 import com.kunkun.oaBlack.module.auth.service.LoginServer;
+import com.kunkun.oaBlack.module.auth.service.UserService;
+import com.kunkun.oaBlack.module.auth.vo.loginVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -17,9 +20,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+import java.util.Objects;
+
 
 @Service
 public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implements LoginServer {
+
+    @Autowired
+    private UserService userService;
 
     public ResultUtil login(UserDao userDao){
         HttpHeaders headers = new HttpHeaders();
@@ -37,15 +46,25 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         );
 
         ResponseEntity<OAuth2AccessToken> result;
-
+        Map<String,Object> resultMap;
+        String accessToken;
         try{
             result = restTemplate.postForEntity("http://localhost:9999/oauth/token",entity,OAuth2AccessToken.class);
+            accessToken = Objects.requireNonNull(result.getBody()).getValue();
+            resultMap = result.getBody().getAdditionalInformation();
         }catch (HttpClientErrorException e){
             throw new BizException(CodeUtil.INTERNAL_SERVER_ERROR.getResultCode(),CodeUtil.INTERNAL_SERVER_ERROR.getResultMessage(),e);
         }
         if (result.getStatusCode()!= HttpStatus.OK){
-            return ResultUtil.faile("登录失败");
+            return ResultUtil.faile("登录失败,密码模式挂了");
         }
-        return ResultUtil.success("登录成功",result);
+        UserEnity userEnity = userService.selectById((Integer) resultMap.get("userid"));
+//        System.out.println(userEnity.getMobile());
+        loginVo login_vo = new loginVo();
+        login_vo.setAccess_token(accessToken);
+        login_vo.setUserName(userEnity.getUserName());
+        login_vo.setNickname(userEnity.getNickname());
+        login_vo.setRoleName(userEnity.getRoleName());
+        return ResultUtil.success("登录成功",login_vo);
     }
 }
