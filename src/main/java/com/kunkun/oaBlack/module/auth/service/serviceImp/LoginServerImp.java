@@ -14,7 +14,10 @@ import com.kunkun.oaBlack.module.auth.vo.loginVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +33,9 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TokenStore jwtTokenStore;
 
     public ResultUtil login(UserDao userDao){
         HttpHeaders headers = new HttpHeaders();
@@ -76,5 +82,18 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         }
         login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
         return ResultUtil.success("登录成功",login_vo);
+    }
+
+    @Override
+    public ResultUtil loginOut(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+
+        //SpringSecurity为我们提供的readAccessToken方法,参数为用户的令牌，返回值为封装好的OAuth2AccessToken对象
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        //在jwt方式中removeAccessToken是一个空实现方法，但是为了做到能够退出的功能，我们重写了这个方法，目的是在redis中删除掉
+        //每一个jwt的唯一标识jti，这样配合jti的拦截器就能做到用户退出的功能了。
+        jwtTokenStore.removeAccessToken(oAuth2AccessToken);
+        return ResultUtil.success("退出成功");
     }
 }
