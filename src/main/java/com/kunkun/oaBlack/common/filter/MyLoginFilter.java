@@ -32,8 +32,6 @@ public class MyLoginFilter extends OncePerRequestFilter {
 
     private final String TOKEN_KEY ="access_token:";
 
-    @Autowired
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
