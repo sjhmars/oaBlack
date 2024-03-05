@@ -32,8 +32,8 @@ public class JwtTokenStoreConfig {
             public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication auth2Authentication){
                 String tokenValue = token.getValue();
                 if (token.getAdditionalInformation().containsKey("jti")){
-                    String jti = token.getAdditionalInformation().get("jti").toString();
-                    redisCache.setCacheObject(TOKEN_KEY+jti,tokenValue,token.getExpiresIn(), TimeUnit.SECONDS);
+                    String userId = token.getAdditionalInformation().get("userid").toString();
+                    redisCache.setCacheObject(TOKEN_KEY+userId,tokenValue,token.getExpiresIn(), TimeUnit.SECONDS);
                 }
             }
 

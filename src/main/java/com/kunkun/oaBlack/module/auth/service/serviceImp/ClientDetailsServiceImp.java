@@ -23,7 +23,7 @@ public class ClientDetailsServiceImp implements ClientDetailsService {
         clientDetails.setClientId("client_sjh"); // 此为demo正常应该是随机生成
         clientDetails.setClientSecret("hello"); // 客户端密码需要加密处理。
         clientDetails.setAuthorizedGrantTypes(Arrays.asList("authorization_code","password"));
-        clientDetails.setScope(Arrays.asList("webapp"));
+        clientDetails.setScope(Arrays.asList("all")); // 配置放行所有权限
         clientDetails.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(1)); //一天有效期
         // clientDetails.setAccessTokenValiditySeconds(3000);
         clientDetails.setAutoApproveScopes(clientDetails.getScope()); // 自动处理授权访问

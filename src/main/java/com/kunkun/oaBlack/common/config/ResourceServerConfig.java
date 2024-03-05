@@ -44,16 +44,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 "/v2/api-docs",
                 "/v3/api-docs",
                 "/webjars/**",
-                "/auth/**",
+                "/auth/login",
                 "/oauth/authorize?**",
                 "/oauth/token?**"
         };
 
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers(webRelease).permitAll() //许可中的地址全部通过
-                .anyRequest().authenticated(); // 其他地址全部拦截
-//        http.addFilterBefore(myLoginFilter, UsernamePasswordAuthenticationFilter.class);
+                .antMatchers(webRelease).permitAll(); //许可中的地址全部通过
+        http.authorizeRequests().anyRequest().authenticated(); // 其他地址全部拦截
+        http.addFilterBefore(myLoginFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.cors();
     }
