@@ -8,6 +8,8 @@ import com.kunkun.oaBlack.module.auth.service.LoginServer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +60,7 @@ public class LoginController {
     @ApiOperation("退出登录")
     @PostMapping("/loginOut")
     public ResultUtil loginOut(){
-        return ResultUtil.success();
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return loginService.loginOut(authentication);
     }
 }

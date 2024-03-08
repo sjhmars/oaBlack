@@ -41,7 +41,8 @@ public class JwtTokenStoreConfig {
             public void removeAccessToken(OAuth2AccessToken token) {
                 if (token.getAdditionalInformation().containsKey("jti")){
                     String userId = token.getAdditionalInformation().get("userid").toString();
-                    redisCache.deleteObject(TOKEN_KEY+":"+userId);
+//                    System.out.println(token.getAdditionalInformation().get("userid"));
+                    redisCache.deleteObject(TOKEN_KEY+userId);
                 }
             }
         };

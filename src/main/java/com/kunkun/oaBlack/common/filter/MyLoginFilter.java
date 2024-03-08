@@ -9,7 +9,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 登录拦截类，需要用到auth模块中的loginUser
  */
+
 @Component
 public class MyLoginFilter extends OncePerRequestFilter {
 
@@ -32,32 +38,40 @@ public class MyLoginFilter extends OncePerRequestFilter {
 
     private final String TOKEN_KEY ="access_token:";
 
+    @Autowired
+    private TokenStore jwtTokenStore;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("=========进入sso前置拦截器========");
 
-        String bearerToken = request.getHeader("Authorization");
-        if (StrUtil.isBlank(bearerToken)){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        OAuth2AuthenticationDetails oAuth2Authentication = null;
+        if (ObjectUtil.isNotNull(authentication)){
+            oAuth2Authentication = (OAuth2AuthenticationDetails) authentication.getDetails();
+        }
+        String token = null;
+        if (oAuth2Authentication != null){
+            token = oAuth2Authentication.getTokenValue();
+        }
+
+        logger.info(token);
+
+        if (StrUtil.isBlank(token)){
             logger.info("没传进来吗");
             filterChain.doFilter(request,response);
             return;
         }
 
-        logger.info(bearerToken);
-        String token = bearerToken.split(" ")[1];
         logger.info(token);
 
         // 解析出userid
-        Integer Id = null;
+        String Id = null;
         try{
-            if (token.length()>30){
-                Claims jwt = Jwts.parser()
-                        .setSigningKey("mortal_su".getBytes(StandardCharsets.UTF_8))
-                        .parseClaimsJws(token)
-                        .getBody();
-                logger.info(jwt);
-                Id = (Integer) jwt.get("userid");
+            if (StrUtil.isNotBlank(token)){
+                OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(token);
+                Id = oAuth2AccessToken.getAdditionalInformation().get("userid").toString();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -66,8 +80,8 @@ public class MyLoginFilter extends OncePerRequestFilter {
         System.out.println(Id);
 
         //查询是否已登录
-        if (redisCache.getCacheObject(TOKEN_KEY+":"+Id)!=null){
-            throw new RuntimeException(CodeUtil.NO_AUTH.getResultMessage());
+        if (redisCache.getCacheObject(TOKEN_KEY+Id)==null){
+            throw new BizException(CodeUtil.NO_AUTH.getResultMessage());
         }
         filterChain.doFilter(request,response);
     }
