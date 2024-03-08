@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
     private static final Logger logger = Logger.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(value = BizException.class)
-    @RequestBody
-    public ResultUtil bizExceptionHandler(HttpServletRequest request,BizException e){
-        logger.error("发生业务异常！原因是：{}",e.getCause());
-        return ResultUtil.faile(e.getErrorCode(),e.getErrorMsg());
-    }
+//    @ExceptionHandler(value = BizException.class)
+//    @RequestBody
+//    public ResultUtil bizExceptionHandler(HttpServletRequest request,BizException e){
+//        logger.error("发生业务异常！原因是：{}",e.getCause());
+//        return ResultUtil.faile(e.getErrorCode(),e.getErrorMsg());
+//    }
 
     @ExceptionHandler(value = Exception.class)
     @RequestBody

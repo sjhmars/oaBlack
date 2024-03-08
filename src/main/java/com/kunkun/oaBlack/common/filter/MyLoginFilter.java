@@ -47,40 +47,43 @@ public class MyLoginFilter extends OncePerRequestFilter {
         System.out.println("=========进入sso前置拦截器========");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2AuthenticationDetails oAuth2Authentication = null;
-        if (ObjectUtil.isNotNull(authentication)){
-            oAuth2Authentication = (OAuth2AuthenticationDetails) authentication.getDetails();
+
+        if (ObjectUtil.isNull(authentication)){
+            logger.info("没传进来吗");
+            filterChain.doFilter(request,response);
+            return;
         }
+
+        OAuth2AuthenticationDetails oAuth2Authentication = null;
+        if (authentication instanceof OAuth2Authentication) {
+            if (ObjectUtil.isNotNull(authentication)){
+                oAuth2Authentication = (OAuth2AuthenticationDetails) authentication.getDetails();
+            }
+        }
+
         String token = null;
+
         if (oAuth2Authentication != null){
             token = oAuth2Authentication.getTokenValue();
         }
 
         logger.info(token);
 
-        if (StrUtil.isBlank(token)){
-            logger.info("没传进来吗");
-            filterChain.doFilter(request,response);
-            return;
-        }
-
-        logger.info(token);
-
-        // 解析出userid
         String Id = null;
         try{
             if (StrUtil.isNotBlank(token)){
                 OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(token);
+                // 解析出userid
                 Id = oAuth2AccessToken.getAdditionalInformation().get("userid").toString();
             }
         }catch (Exception e){
             e.printStackTrace();
-            throw new RuntimeException("token非法");
+            throw new BizException("token非法");
         }
-        System.out.println(Id);
 
+        System.out.println(Id);
         //查询是否已登录
-        if (redisCache.getCacheObject(TOKEN_KEY+Id)==null){
+        if (Id!=null && redisCache.getCacheObject(TOKEN_KEY+Id)==null){
             throw new BizException(CodeUtil.NO_AUTH.getResultMessage());
         }
         filterChain.doFilter(request,response);
