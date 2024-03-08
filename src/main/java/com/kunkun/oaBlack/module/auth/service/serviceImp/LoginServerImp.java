@@ -75,15 +75,14 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         login_vo.setUserName(userEnity.getUserName());
         login_vo.setNickname(userEnity.getNickname());
         login_vo.setRoleName(userEnity.getRoleName());
+        login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
         if (ObjectUtil.isNotEmpty(userService.updateLoginTimeAndAddress(userEnity))){
             log.debug("登录时间和登录地点更新成功");
         }else{
             log.warn("登录时间和登录地点更新失败");
         }
-        login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
         return ResultUtil.success("登录成功",login_vo);
     }
-
     @Override
     public ResultUtil loginOut(Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
