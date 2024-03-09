@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -58,7 +55,7 @@ public class LoginController {
     }
 
     @ApiOperation("退出登录")
-    @PostMapping("/loginOut")
+    @GetMapping("/loginOut")
     public ResultUtil loginOut(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return loginService.loginOut(authentication);
