@@ -17,13 +17,13 @@ import java.util.Date;
 @Service
 public class UserServiceImp extends ServiceImpl<UserMapper, UserEnity> implements UserService {
 
-    @Cacheable(value = "user", key = "#userId")
+//    @Cacheable(value = "user", key = "#userId")
     @Override
     public UserEnity selectById(Integer userId){
         return getOne(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getUserId,userId));
     }
 
-    @CachePut(value = "user", key = "#userEnity.userId",unless="#result==null")
+//    @CachePut(value = "user", key = "#userEnity.userId",unless="#result==null")
     @Override
     public UserEnity updateLoginTimeAndAddress(UserEnity userEnity) {
         Date myNowTime = new Date();
