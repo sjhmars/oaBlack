@@ -90,8 +90,8 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         //SpringSecurity为我们提供的readAccessToken方法,参数为用户的令牌，返回值为封装好的OAuth2AccessToken对象
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         //在jwt方式中removeAccessToken是一个空实现方法，但是为了做到能够退出的功能，我们重写了这个方法，目的是在redis中删除掉
-        //每一个jwt的唯一标识jti，这样配合jti的拦截器就能做到用户退出的功能了。
+        //每一个jwt添加了自定义的唯一userid，这样配合userid的拦截器就能做到用户退出的功能了。
         jwtTokenStore.removeAccessToken(oAuth2AccessToken);
-        return ResultUtil.success("退出成功",oAuth2AccessToken);
+        return ResultUtil.success("退出成功");
     }
 }

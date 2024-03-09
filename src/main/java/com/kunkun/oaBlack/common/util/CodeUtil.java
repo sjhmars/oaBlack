@@ -6,7 +6,7 @@ public enum CodeUtil implements BaseErrorInfoInterface {
     NO_AUTH(6000,"不是哥们，你根本没登录"),
     INTERNAL_SERVER_ERROR(5000,"这个问题找mortal"),
     NOT_FOUND(4004, "嘿嘿！前端的事不关我的事，或许可能后端资源丢了？？？"),
-    LOING_FAILE(4001,"登录失败");
+    LOING_FAILE(4001,"登录异常");
     //自定义枚举
 
 
