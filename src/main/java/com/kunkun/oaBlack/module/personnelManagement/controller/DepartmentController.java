@@ -36,9 +36,10 @@ public class DepartmentController {
         return departmentService.addDepartment(addDepartmentDao,authentication);
     }
 
-    @ApiOperation("返回架构树")
+    @ApiOperation("返回部门目录")
     @PostMapping("/selectDepartmentTree")
     public ResultUtil selectDepartmentTree(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return ResultUtil.faile("暂时未完成");
     }
 

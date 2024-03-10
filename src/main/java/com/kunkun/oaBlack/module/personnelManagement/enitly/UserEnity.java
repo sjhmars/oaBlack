@@ -16,8 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @TableName("t_user")
 public class UserEnity {
-    @TableId(type = IdType.AUTO)
-    @TableField(value = "user_id")
+    @TableId(value = "user_id",type = IdType.AUTO)
     private Integer userId;
 
     @TableField(value = "user_name")
@@ -83,4 +82,7 @@ public class UserEnity {
 
     @TableField(value = "last_login_address")
     private String lastLoginAddress;
+
+    @TableField(value = "work_status")
+    private Integer workStatus;
 }
