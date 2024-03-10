@@ -50,6 +50,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         userEnity.setWorkStatus(addUserDao.getWorkStatus());
         userEnity.setDepartmentId(addUserDao.getDepartmentId());
         userEnity.setPostId(addUserDao.getPostId());
+        userEnity.setStatus(1);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String passwordEncoder =  bCryptPasswordEncoder.encode(addUserDao.getUserPassword());
         userEnity.setUserPassword(passwordEncoder);
