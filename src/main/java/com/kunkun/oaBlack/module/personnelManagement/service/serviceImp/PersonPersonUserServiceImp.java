@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -29,11 +30,12 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
 
     @Cacheable(value = "user", key = "#userId")
     @Override
-    public UserEnity selectById(Integer userId) {
+    public UserEnity selectByIdMy(Integer userId) {
         return personUserMapper.selectById(userId);
     }
 
     @Override
+    @Transactional
     public ResultUtil addUser(AddUserDao addUserDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -41,7 +43,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
         UserEnity userEnity = new UserEnity();
         userEnity.setCreateTime(new Date());
-        UserEnity CreatUser =  selectById(userId);
+        UserEnity CreatUser = selectByIdMy(userId);
         userEnity.setCreateBy(CreatUser.getUserName());
         userEnity.setUserName(addUserDao.getUserName());
         userEnity.setSex(addUserDao.getSex());

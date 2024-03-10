@@ -7,6 +7,6 @@ import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import org.springframework.security.core.Authentication;
 
 public interface PersonUserService extends IService<UserEnity> {
-    UserEnity selectById(Integer userId);
+    UserEnity selectByIdMy(Integer userId);
     ResultUtil addUser(AddUserDao addUserDao, Authentication authentication);
 }

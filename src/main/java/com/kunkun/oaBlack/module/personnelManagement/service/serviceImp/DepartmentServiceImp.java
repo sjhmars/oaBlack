@@ -56,7 +56,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
     @CachePut(value = "user", key = "#userId",unless="#result==null")
     public UserEnity updateUserResponsibleDepartmentIds(Integer userId,Integer departmentId,Integer change_userId){
-        UserEnity userEnityold = personUserService.selectById(userId);
+        UserEnity userEnityold = personUserService.selectByIdMy(userId);
         String departmentIds = userEnityold.getDepartmentIds();
         departmentIds = departmentIds+","+departmentId;
         userEnityold.setDepartmentIds(departmentIds);

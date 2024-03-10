@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/Department")
-@Api("部门管理接口")
+@Api("部门管理模块")
 public class DepartmentController {
 
     @Autowired

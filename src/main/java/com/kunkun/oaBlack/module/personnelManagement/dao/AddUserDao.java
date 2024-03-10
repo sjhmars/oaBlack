@@ -26,4 +26,6 @@ public class AddUserDao {
     private Integer postId;
 
     private String userPassword;
+
+    private String role_ids;
 }

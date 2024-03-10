@@ -3,6 +3,7 @@ package com.kunkun.oaBlack.module.personnelManagement.controller;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddUserDao;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
-@ApiOperation("用户管理接口")
+@Api("用户模块")
 public class UserController {
     @Autowired
     private PersonUserService personUserService;
