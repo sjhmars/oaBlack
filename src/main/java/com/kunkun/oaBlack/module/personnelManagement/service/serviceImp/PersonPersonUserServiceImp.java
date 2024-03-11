@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddUserDao;
+import com.kunkun.oaBlack.module.personnelManagement.mapper.DepartmentMapper;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.PersonUserMapper;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
@@ -24,6 +25,9 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
 
     @Autowired
     private PersonUserMapper personUserMapper;
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     @Autowired
     private TokenStore jwtTokenStore;
@@ -53,6 +57,11 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         userEnity.setDepartmentId(addUserDao.getDepartmentId());
         userEnity.setPostId(addUserDao.getPostId());
         userEnity.setStatus(1);
+
+        String roleName =  departmentMapper.selectDepartmentName(addUserDao.getRoleId());
+        userEnity.setRoleId(addUserDao.getRoleId());
+        userEnity.setRoleName(roleName);
+
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String passwordEncoder =  bCryptPasswordEncoder.encode(addUserDao.getUserPassword());
         userEnity.setUserPassword(passwordEncoder);

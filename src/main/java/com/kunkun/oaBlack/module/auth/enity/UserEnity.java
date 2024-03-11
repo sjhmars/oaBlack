@@ -63,8 +63,8 @@ public class UserEnity implements Serializable{
     @TableField(value = "birth")
     private Date birth;
 
-    @TableField(value = "role_ids")
-    private String roleIds;
+    @TableField(value = "role_id")
+    private Integer roleId;
 
     @TableField(value = "role_name")
     private String roleName;

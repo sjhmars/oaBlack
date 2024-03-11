@@ -75,7 +75,11 @@ public class LoginServerImp extends ServiceImpl<UserMapper, UserEnity> implement
         login_vo.setUserName(userEnity.getUserName());
         login_vo.setNickname(userEnity.getNickname());
         login_vo.setRoleName(userEnity.getRoleName());
-        login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
+        if (userEnity.getLastLoginTime()!=null){
+            login_vo.setLastLoginTime(userEnity.getLastLoginTime().getTime());
+        }else {
+            login_vo.setLastLoginAddress(null);
+        }
         if (ObjectUtil.isNotEmpty(userService.updateLoginTimeAndAddress(userEnity))){
             log.debug("登录时间和登录地点更新成功");
         }else{

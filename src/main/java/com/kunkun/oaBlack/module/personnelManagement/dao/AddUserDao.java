@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Data
@@ -11,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class AddUserDao {
 
+    @NotEmpty
     private String userName;
 
     private Integer sex;
@@ -25,7 +27,8 @@ public class AddUserDao {
 
     private Integer postId;
 
+    @NotEmpty
     private String userPassword;
 
-    private String role_ids;
+    private Integer roleId;
 }

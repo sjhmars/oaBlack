@@ -3,8 +3,10 @@ package com.kunkun.oaBlack.module.auth.service.serviceImp;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.kunkun.oaBlack.module.auth.dao.LoginDao;
+import com.kunkun.oaBlack.module.auth.enity.RoleEntity;
 import com.kunkun.oaBlack.module.auth.enity.UserEnity;
 import com.kunkun.oaBlack.module.auth.mapper.UserMapper;
+import com.kunkun.oaBlack.module.auth.service.RoleService;
 import com.kunkun.oaBlack.module.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +24,9 @@ public class UserDetailServiceImp implements UserDetailsService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEnity userEnity = userService.getOne(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getMobile,username));
@@ -33,7 +38,9 @@ public class UserDetailServiceImp implements UserDetailsService {
             loginUser.set_delete(false);
         }
         loginUser.setUserEnity(userEnity);
-        String permission = userEnity.getRoleName();
+        Integer roleId = userEnity.getRoleId();
+        RoleEntity roleEntity = roleService.getById(roleId);
+        String permission = roleEntity.getRoleAuthority();
         List<String> permissions = Stream.of(permission.split(":")).collect(Collectors.toList()); //获取用户权限
         loginUser.setPermissions(permissions);
         return loginUser;

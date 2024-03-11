@@ -1,6 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
@@ -9,6 +10,7 @@ import com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.DepartmentMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,10 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, DepartmentEnitly> implements DepartmentService{
@@ -56,6 +61,65 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         }
         return ResultUtil.faile("更新失败");
     }
+
+    @Override
+    public List<DepartmentTreeVo> getDepartmentTree(Authentication authentication) {
+        List<DepartmentEnitly> departmentEnitlies = departmentMapper.selectAll();
+
+        List<DepartmentTreeVo> departmentTreeVoList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(departmentEnitlies)) {
+            // 进行拆解封装
+                departmentTreeVoList = departmentEnitlies.stream().map(departmentEnitly1 -> {
+                DepartmentTreeVo departmentTreeVo = new DepartmentTreeVo();
+                departmentTreeVo.setDepartmentId(departmentEnitly1.getDepartmentId());
+                departmentTreeVo.setDepartmentName(departmentEnitly1.getDepartmentName());
+                departmentTreeVo.setSuperiorDepartment(departmentEnitly1.getSuperiorDepartment());
+                departmentTreeVo.setUserId(departmentEnitly1.getUserId());
+                return departmentTreeVo;
+            }).collect(Collectors.toList());
+        }
+
+        List<DepartmentTreeVo> departmentTreeVoList1 = new ArrayList<>();
+        for (DepartmentTreeVo departmentTreeVo: departmentTreeVoList) {
+            if (departmentTreeVo.getSuperiorDepartment() == null){
+                recursionFn(departmentTreeVoList,departmentTreeVo);
+                departmentTreeVoList1.add(departmentTreeVo);
+            }
+        }
+        if (departmentTreeVoList1.isEmpty()){
+            departmentTreeVoList1 = departmentTreeVoList;
+        }
+        return departmentTreeVoList1;
+    }
+
+    private void recursionFn(List<DepartmentTreeVo> list, DepartmentTreeVo DepartmentTreeVo) {
+        // 得到子节点列表
+        List<DepartmentTreeVo> childList = getChildList(list, DepartmentTreeVo);
+        DepartmentTreeVo.setChildren(childList);
+        for (DepartmentTreeVo tChild : childList) {
+            // 如果子节点有下一级节点，得到下一级的节点列表
+            if (hasChild(list, tChild)) {
+                recursionFn(list, tChild);
+            }
+        }
+    }
+
+    private List<DepartmentTreeVo> getChildList(List<DepartmentTreeVo> list, DepartmentTreeVo departmentTreeVo) {
+        List<DepartmentTreeVo> deptList = new ArrayList<>();
+        for(DepartmentTreeVo d:list){
+            // 遍历非顶级节点，并获得传入参数顶级节点的下一级子节点列表
+            if (d.getSuperiorDepartment() != null && d.getSuperiorDepartment().equals(departmentTreeVo.getDepartmentId())) {
+                deptList.add(d);
+            }
+        }
+        return deptList;
+    }
+
+    private boolean hasChild(List<DepartmentTreeVo> list, DepartmentTreeVo dept) {
+        return getChildList(list, dept).size() > 0;
+    }
+
+
 
     @CachePut(value = "user", key = "#userId",unless="#result==null")
     public UserEnity updateUserResponsibleDepartmentIds(Integer userId,Integer departmentId,Integer change_userId){
