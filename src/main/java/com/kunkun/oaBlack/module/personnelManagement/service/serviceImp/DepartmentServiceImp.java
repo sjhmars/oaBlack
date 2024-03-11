@@ -46,8 +46,11 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         departmentEnitly.setSuperiorDepartment(departmentDao.getSuperiorDepartment());
         departmentEnitly.setUserId(departmentDao.getUserId());
         departmentEnitly.setIsDelete(0);
+        DepartmentEnitly departmentEnitlyOld = departmentMapper.selectById(departmentDao.getSuperiorDepartment());
+        if (departmentEnitlyOld == null){
+            return ResultUtil.faile("没有这个父级部门");
+        }
         departmentMapper.insert(departmentEnitly);
-
         if (updateUserResponsibleDepartmentIds(departmentDao.getUserId(),departmentEnitly.getDepartmentId(),userId)!=null){
             return ResultUtil.success("新增部门成功",departmentEnitly);
         }
