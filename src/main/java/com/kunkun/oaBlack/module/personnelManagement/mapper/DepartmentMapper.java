@@ -11,6 +11,5 @@ import java.util.List;
 @Mapper
 @Repository
 public interface DepartmentMapper extends BaseMapper<DepartmentEnitly> {
-    String selectDepartmentName(@Param("role_id")Integer roleId);
     List<DepartmentEnitly> selectAll();
 }

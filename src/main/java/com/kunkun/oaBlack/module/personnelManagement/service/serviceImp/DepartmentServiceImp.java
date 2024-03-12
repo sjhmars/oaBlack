@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
         List<DepartmentTreeVo> departmentTreeVoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(departmentEnitlies)) {
-            // 进行拆解封装
+            // 进行拆解封装 转换成DepartmentTreeVo
                 departmentTreeVoList = departmentEnitlies.stream().map(departmentEnitly1 -> {
                 DepartmentTreeVo departmentTreeVo = new DepartmentTreeVo();
                 departmentTreeVo.setDepartmentId(departmentEnitly1.getDepartmentId());
@@ -92,6 +93,29 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         return departmentTreeVoList1;
     }
 
+    @Override
+    public String getDepartmentName(Integer DepartmentId) {
+        DepartmentEnitly departmentEnitly = departmentMapper.selectById(DepartmentId);
+        List<String> DepartmentName = new ArrayList<>();
+        DepartmentName.add(departmentEnitly.getDepartmentName());
+        while (departmentEnitly.getSuperiorDepartment()!=null){
+            departmentEnitly = departmentMapper.selectById(departmentEnitly.getSuperiorDepartment());
+            DepartmentName.add(departmentEnitly.getDepartmentName());
+        }
+        Collections.reverse(DepartmentName);
+        StringBuilder name = new StringBuilder();
+        for (String departName: DepartmentName){
+            name.append(departName).append("/");
+        }
+        return name.toString();
+    }
+
+    @Override
+    public String getOneName(Integer DepartmentId) {
+
+        return null;
+    }
+
     private void recursionFn(List<DepartmentTreeVo> list, DepartmentTreeVo DepartmentTreeVo) {
         // 得到子节点列表
         List<DepartmentTreeVo> childList = getChildList(list, DepartmentTreeVo);
@@ -107,7 +131,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
     private List<DepartmentTreeVo> getChildList(List<DepartmentTreeVo> list, DepartmentTreeVo departmentTreeVo) {
         List<DepartmentTreeVo> deptList = new ArrayList<>();
         for(DepartmentTreeVo d:list){
-            // 遍历非顶级节点，并获得传入参数顶级节点的下一级子节点列表
+            // 遍历除顶级节点外的其他节点，并把除当前节点外的其他节点加入列表
             if (d.getSuperiorDepartment() != null && d.getSuperiorDepartment().equals(departmentTreeVo.getDepartmentId())) {
                 deptList.add(d);
             }

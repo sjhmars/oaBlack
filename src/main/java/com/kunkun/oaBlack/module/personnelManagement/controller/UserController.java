@@ -5,6 +5,7 @@ import com.kunkun.oaBlack.module.personnelManagement.dao.AddUserDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.RoleEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.MyRoleService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.UserAndDepartmentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,12 @@ public class UserController {
     private ResultUtil selectAllRole(){
         List<RoleEntity> roleEntityList = myRoleService.list();
         return ResultUtil.success(roleEntityList);
+    }
+
+    @ApiOperation("查询所有员工信息")
+    @GetMapping("/selectAllPeople")
+    private ResultUtil selectAllUser(){
+        List<UserAndDepartmentVo> userAndDepartmentVoList = personUserService.selectUserAll();
+        return ResultUtil.success(userAndDepartmentVoList);
     }
 }

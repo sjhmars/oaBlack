@@ -1,5 +1,7 @@
 # 应用名称
 spring:
+  main:
+    allow-circular-references: true # 允许循环引用
   application:
     name: oaback_server
   redis:

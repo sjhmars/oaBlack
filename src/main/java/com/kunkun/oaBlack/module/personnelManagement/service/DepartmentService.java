@@ -13,4 +13,6 @@ import java.util.List;
 public interface DepartmentService extends IService<DepartmentEnitly> {
     ResultUtil addDepartment(AddDepartmentDao departmentDao,Authentication authentication);
     List<DepartmentTreeVo> getDepartmentTree(Authentication authentication);
+    String getDepartmentName(Integer DepartmentId);
+    String getOneName(Integer DepartmentId);
 }
