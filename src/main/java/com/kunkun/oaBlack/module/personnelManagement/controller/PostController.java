@@ -25,7 +25,7 @@ public class PostController {
 
     @ApiOperation("新增岗位")
     @PostMapping("/addPost")
-    public ResultUtil addPost(@RequestBody String postName){
+    public ResultUtil addPost(@RequestParam("postName") String postName){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         PostEnity postEnity = postService.addPost(postName,authentication);
         if (postEnity!=null){

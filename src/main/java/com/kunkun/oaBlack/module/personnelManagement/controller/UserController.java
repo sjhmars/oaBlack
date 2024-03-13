@@ -1,8 +1,12 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddUserDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.UpdateUserDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.UserDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.RoleEntity;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.service.MyRoleService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
 import com.kunkun.oaBlack.module.personnelManagement.vo.UserAndDepartmentVo;
@@ -50,8 +54,23 @@ public class UserController {
 
     @ApiOperation("查询所有员工信息")
     @GetMapping("/selectAllPeople")
-    private ResultUtil selectAllUser(){
-        List<UserAndDepartmentVo> userAndDepartmentVoList = personUserService.selectUserAll();
-        return ResultUtil.success(userAndDepartmentVoList);
+    private ResultUtil selectAllUser(@RequestBody UserDao userDao){
+        UserAndDepartmentVo userAndDepartmentVo = personUserService.selectUserById(userDao.getUserId());
+        return ResultUtil.success(userAndDepartmentVo);
+    }
+
+    @ApiOperation("更新员工信息")
+    @PostMapping("/updateUser")
+    public ResultUtil updateUser(@Valid @RequestBody UpdateUserDao updateUserDao, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            Map<String,String> errors = bindingResult.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField,FieldError::getDefaultMessage));
+            return ResultUtil.faile(errors);
+        }
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        UserEnity userEnity = personUserService.updateUserById(updateUserDao,authentication);
+        if (ObjectUtil.isNotNull(userEnity)){
+            return ResultUtil.success(userEnity);
+        }
+        return ResultUtil.faile("更新失败");
     }
 }

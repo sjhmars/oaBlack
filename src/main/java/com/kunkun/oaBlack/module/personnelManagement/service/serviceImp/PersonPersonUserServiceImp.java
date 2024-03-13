@@ -2,23 +2,29 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.auth.mapper.RoleMapper;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddUserDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.UpdateUserDao;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.MyRoleMapper;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.PersonUserMapper;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.PostMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DUserVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.UserAndDepartmentVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -57,6 +63,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
 
     @Override
     @Transactional
+    @CacheEvict(value = "DepartmentUserTree")
     public ResultUtil addUser(AddUserDao addUserDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -98,29 +105,73 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     }
 
     @Override
-    public List<UserAndDepartmentVo> selectUserAll() {
-        List<UserVo> userVoList = personUserMapper.selectUserVo();
-        List<UserAndDepartmentVo> userAndDepartmentVoList = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(userVoList)) {
-            // 进行拆解封装 转换成userAndDepartmentVo
-            userAndDepartmentVoList = userVoList.stream().map(userVo -> {
-                UserAndDepartmentVo userAndDepartmentVo = new UserAndDepartmentVo();
-                if (ObjectUtil.isNotNull(userVo.getBirth())){
-                    userAndDepartmentVo.setBirth(userVo.getBirth().getTime());
-                }
+    public UserAndDepartmentVo selectUserById(Integer userId) {
+        UserVo userVo = personUserMapper.selectUserVoById(userId);
+        UserAndDepartmentVo userAndDepartmentVo = new UserAndDepartmentVo();
+        if (ObjectUtil.isNotEmpty(userVo)) {
+            if (ObjectUtil.isNotNull(userVo.getBirth())){
+                userAndDepartmentVo.setBirth(userVo.getBirth().getTime());
+            }
+            userAndDepartmentVo.setEmail(userVo.getEmail());
+            userAndDepartmentVo.setMobile(userVo.getMobile());
+            userAndDepartmentVo.setUserId(userVo.getUserId());
+            userAndDepartmentVo.setUserName(userVo.getUserName());
+            userAndDepartmentVo.setWork_status(userVo.getWork_status());
+            String departmentName = departmentService.getDepartmentName(userVo.getDepartmentId());
+            String postName = postMapper.selectPostName(userVo.getPostId());
+            String departmentNameAndPostName = departmentName+postName;
+            userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
 
-                userAndDepartmentVo.setEmail(userVo.getEmail());
-                userAndDepartmentVo.setMobile(userVo.getMobile());
-                userAndDepartmentVo.setUserId(userVo.getUserId());
-                userAndDepartmentVo.setUserName(userVo.getUserName());
-                userAndDepartmentVo.setWork_status(userVo.getWork_status());
-                String departmentName = departmentService.getDepartmentName(userVo.getDepartmentId());
-                String postName = postMapper.selectPostName(userVo.getPostId());
-                String departmentNameAndPostName = departmentName+postName;
-                userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
-                return userAndDepartmentVo;
-            }).collect(Collectors.toList());
         }
-        return userAndDepartmentVoList;
+        return userAndDepartmentVo;
+    }
+
+    @Override
+    @Cacheable(value = "DepartmentUserTree")
+    public List<DUserVo> selectByDepartmentId(Integer departmentId) {
+        return personUserMapper.selectAllByDepartmentId(departmentId);
+    }
+
+    @Override
+    @CacheEvict(value = "DepartmentUserTree")
+    @CachePut(value = "user", key = "updateUserDao.userId",unless="#result==null")
+    public UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication) {
+        UserEnity userEnity = selectByIdMy(updateUserDao.getUserId());
+        if (ObjectUtil.isNotNull(updateUserDao.getBirth())){
+            userEnity.setBirth(updateUserDao.getBirth());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getDepartmentId())){
+            userEnity.setDepartmentId(updateUserDao.getDepartmentId());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getMobile())){
+            userEnity.setMobile(updateUserDao.getMobile());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getNikeName())){
+            userEnity.setNickname(updateUserDao.getNikeName());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getPostId())){
+            userEnity.setPostId(updateUserDao.getPostId());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getRoleId())){
+            userEnity.setRoleId(updateUserDao.getRoleId());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getSex())){
+            userEnity.setSex(updateUserDao.getSex());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getUserName())){
+            userEnity.setUserName(updateUserDao.getUserName());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getWorkStatus())){
+            userEnity.setWorkStatus(updateUserDao.getWorkStatus());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getUserPassword())){
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String passwordEncoder =  bCryptPasswordEncoder.encode(updateUserDao.getUserPassword());
+            userEnity.setUserPassword(passwordEncoder);
+        }
+        if (update(userEnity,new LambdaUpdateWrapper<UserEnity>().eq(UserEnity::getUserId,userEnity.getUserId()))){
+            return userEnity;
+        }
+        return null;
     }
 }

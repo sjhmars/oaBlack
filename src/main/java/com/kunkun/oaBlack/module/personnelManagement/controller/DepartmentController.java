@@ -4,6 +4,7 @@ import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddDepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.DepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeUserVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,13 @@ public class DepartmentController {
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         List<DepartmentTreeVo>  departmentTreeVoList = departmentService.getDepartmentTree(authentication);
         return ResultUtil.success(departmentTreeVoList);
+    }
+
+    @ApiOperation("返回组织架构")
+    @GetMapping("/selectDepartmentUserTree")
+    public ResultUtil selectDepartmentUserTree(){
+        List<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree();
+        return ResultUtil.success(departmentTreeUserVos);
     }
 
 }

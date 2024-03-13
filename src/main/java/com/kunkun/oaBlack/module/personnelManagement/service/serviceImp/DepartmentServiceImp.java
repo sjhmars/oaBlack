@@ -1,5 +1,6 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,8 +11,11 @@ import com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.DepartmentMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DUserVo;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeUserVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -40,6 +44,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
     @Override
     @Transactional
+    @CacheEvict(value = "DepartmentUserTree")
     public ResultUtil addDepartment(AddDepartmentDao departmentDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -52,6 +57,12 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         departmentEnitly.setSuperiorDepartment(departmentDao.getSuperiorDepartment());
         departmentEnitly.setUserId(departmentDao.getUserId());
         departmentEnitly.setIsDelete(0);
+
+        UserEnity userEnity =  personUserService.selectByIdMy(userId);
+        if (ObjectUtil.isNotNull(userEnity)) {
+            departmentEnitly.setHeadUserName(userEnity.getUserName());
+        }
+
         DepartmentEnitly departmentEnitlyOld = departmentMapper.selectById(departmentDao.getSuperiorDepartment());
         if (departmentEnitlyOld == null){
             return ResultUtil.faile("没有这个父级部门");
@@ -115,6 +126,66 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
         return null;
     }
+
+    @Override
+    public List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree() {
+        List<DepartmentEnitly> departmentEnitlies = departmentMapper.selectAll();
+        List<DepartmentTreeUserVo> departmentTreeUserVoList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(departmentEnitlies)) {
+            // 进行拆解封装 转换成DepartmentTreeVo
+            departmentTreeUserVoList = departmentEnitlies.stream().map(departmentEnitly -> {
+                DepartmentTreeUserVo departmentTreeUserVo = new DepartmentTreeUserVo();
+                departmentTreeUserVo.setDepartmentId(departmentEnitly.getDepartmentId());
+                departmentTreeUserVo.setDepartmentName(departmentEnitly.getDepartmentName());
+                departmentTreeUserVo.setSuperiorDepartment(departmentEnitly.getSuperiorDepartment());
+                departmentTreeUserVo.setUserId(departmentEnitly.getUserId());
+                departmentTreeUserVo.setHeadUserName(departmentEnitly.getHeadUserName());
+//                UserEnity userEnity = personUserService.selectByIdMy(departmentEnitly);
+                List<DUserVo> dUserVoList = personUserService.selectByDepartmentId(departmentEnitly.getDepartmentId());
+                departmentTreeUserVo.setDUserVoList(dUserVoList);
+                return departmentTreeUserVo;
+            }).collect(Collectors.toList());
+        }
+        List<DepartmentTreeUserVo> departmentTreeUserVos = new ArrayList<>();
+        for (DepartmentTreeUserVo departmentTreeUserVo: departmentTreeUserVoList) {
+            if (departmentTreeUserVo.getSuperiorDepartment() == null){
+                UserTreeRecursionFn(departmentTreeUserVoList,departmentTreeUserVo);
+                departmentTreeUserVos.add(departmentTreeUserVo);
+            }
+        }
+        if (departmentTreeUserVos.isEmpty()){
+            departmentTreeUserVos = departmentTreeUserVoList;
+        }
+        return departmentTreeUserVos;
+    }
+
+    private void UserTreeRecursionFn(List<DepartmentTreeUserVo> list, DepartmentTreeUserVo departmentTreeUserVo) {
+        // 得到子节点列表
+        List<DepartmentTreeUserVo> childList = getUserTreeChildList(list, departmentTreeUserVo);
+        departmentTreeUserVo.setChildren(childList);
+        for (DepartmentTreeUserVo tChild : childList) {
+            // 如果子节点有下一级节点，得到下一级的节点列表
+            if (UserTreeHasChild(list, tChild)) {
+                UserTreeRecursionFn(list, tChild);
+            }
+        }
+    }
+
+    private List<DepartmentTreeUserVo> getUserTreeChildList(List<DepartmentTreeUserVo> list, DepartmentTreeUserVo departmentTreeUserVo) {
+        List<DepartmentTreeUserVo> deptList = new ArrayList<>();
+        for(DepartmentTreeUserVo d:list){
+            // 遍历除顶级节点外的其他节点，并把除当前节点外的其他节点加入列表
+            if (d.getSuperiorDepartment() != null && d.getSuperiorDepartment().equals(departmentTreeUserVo.getDepartmentId())) {
+                deptList.add(d);
+            }
+        }
+        return deptList;
+    }
+
+    private boolean UserTreeHasChild(List<DepartmentTreeUserVo> list, DepartmentTreeUserVo dept) {
+        return getUserTreeChildList(list, dept).size() > 0;
+    }
+
 
     private void recursionFn(List<DepartmentTreeVo> list, DepartmentTreeVo DepartmentTreeVo) {
         // 得到子节点列表

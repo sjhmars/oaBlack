@@ -11,9 +11,11 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddUserDao {
+public class UpdateUserDao {
 
     @NotEmpty
+    private Integer userId;
+
     private String userName;
 
     private Integer sex;
@@ -29,8 +31,9 @@ public class AddUserDao {
 
     private Integer postId;
 
-    @NotEmpty
     private String userPassword;
 
     private Integer roleId;
+
+    private String nikeName;
 }

@@ -5,6 +5,7 @@ import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddDepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.DepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly;
+import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeUserVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import org.springframework.security.core.Authentication;
 
@@ -15,4 +16,6 @@ public interface DepartmentService extends IService<DepartmentEnitly> {
     List<DepartmentTreeVo> getDepartmentTree(Authentication authentication);
     String getDepartmentName(Integer DepartmentId);
     String getOneName(Integer DepartmentId);
+
+    List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree();
 }

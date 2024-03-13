@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kunkun.oaBlack.module.personnelManagement.mapper.PersonUserMapper">
-    <select id="selectUserVo" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
-select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user;
+
+    <select id="selectAllByDepartmentId" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.DUserVo">
+        select user_id,user_name,t_user.create_time,address,email,mobile,sex,status,birth,role_name,nickname,work_status,post_name
+        from t_user left join  t_post on t_user.post_id = t_post.post_id where t_user.department_id = #{departmentId}
+    </select>
+    <select id="selectUserVoById" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
+        select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user where user_id = #{userId}
     </select>
 </mapper>

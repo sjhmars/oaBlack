@@ -36,4 +36,7 @@ public class DepartmentEnitly {
 
     @TableField("user_id")
     private Integer userId;
+
+    @TableField("head_user_name")
+    private String headUserName;
 }
