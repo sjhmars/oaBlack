@@ -11,7 +11,7 @@
  Target Server Version : 80022
  File Encoding         : 65001
 
- Date: 10/03/2024 22:35:38
+ Date: 14/03/2024 04:34:29
 */
 
 SET NAMES utf8mb4;
@@ -29,13 +29,18 @@ CREATE TABLE `t_department`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `user_id` int NULL DEFAULT NULL COMMENT '负责人',
+  `head_user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '负责人姓名',
   PRIMARY KEY (`department_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_department
 -- ----------------------------
-INSERT INTO `t_department` VALUES (1, '管委会', NULL, 0, '2024-03-10 02:18:09', NULL, 1);
-INSERT INTO `t_department` VALUES (3, '总经办', 1, 0, '2024-03-10 03:49:34', NULL, 1);
+INSERT INTO `t_department` VALUES (1, '管委会', NULL, 0, '2024-03-10 02:18:09', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (3, '总经办', 1, 0, '2024-03-10 03:49:34', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (4, '战略部', 1, 0, '2024-03-11 23:14:16', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (5, '战略部', 1, 0, '2024-03-11 23:14:42', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (6, '战略部', 5, 0, '2024-03-11 23:14:56', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (7, '战略市场', 6, 0, '2024-03-12 23:48:36', NULL, 1, 'test');
 
 SET FOREIGN_KEY_CHECKS = 1;
