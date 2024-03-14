@@ -7,6 +7,7 @@ import com.kunkun.oaBlack.module.personnelManagement.service.PostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.method.P;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ public class PostController {
 
     @ApiOperation("新增岗位")
     @PostMapping("/addPost")
+    @CacheEvict(value = "post")
     public ResultUtil addPost(@RequestBody String postName){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         PostEnity postEnity = postService.addPost(postName,authentication);
