@@ -57,12 +57,12 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         departmentEnitly.setSuperiorDepartment(departmentDao.getSuperiorDepartment());
         departmentEnitly.setUserId(departmentDao.getUserId());
         departmentEnitly.setIsDelete(0);
-
-        UserEnity userEnity =  personUserService.selectByIdMy(userId);
-        if (ObjectUtil.isNotNull(userEnity)) {
-            departmentEnitly.setHeadUserName(userEnity.getUserName());
+        if (userId!=null){
+            UserEnity userEnity =  personUserService.selectByIdMy(userId);
+            if (ObjectUtil.isNotNull(userEnity)) {
+                departmentEnitly.setHeadUserName(userEnity.getUserName());
+            }
         }
-
         DepartmentEnitly departmentEnitlyOld = departmentMapper.selectById(departmentDao.getSuperiorDepartment());
         if (departmentEnitlyOld == null){
             return ResultUtil.faile("没有这个父级部门");
@@ -157,6 +157,11 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
             departmentTreeUserVos = departmentTreeUserVoList;
         }
         return departmentTreeUserVos;
+    }
+
+    @Override
+    public DepartmentEnitly updataHeadUserId() {
+        return null;
     }
 
     private void UserTreeRecursionFn(List<DepartmentTreeUserVo> list, DepartmentTreeUserVo departmentTreeUserVo) {

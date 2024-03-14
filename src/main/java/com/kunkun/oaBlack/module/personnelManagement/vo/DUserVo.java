@@ -34,9 +34,9 @@ public class DUserVo {
 
     private String roleName;
 
-    private Integer postId;
-
     private String nickname;
 
     private Integer workStatus;
+
+    private String postName;
 }

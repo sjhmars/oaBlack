@@ -9,6 +9,7 @@ import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
@@ -52,6 +53,11 @@ public class DepartmentController {
     public ResultUtil selectDepartmentUserTree(){
         List<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree();
         return ResultUtil.success(departmentTreeUserVos);
+    }
+
+    @ApiOperation("更改负责人")
+    public ResultUtil updataHeadUserId(){
+        return null;
     }
 
 }
