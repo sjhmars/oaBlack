@@ -29,7 +29,7 @@ public class WagesController {
     }
 
     @ApiOperation("根据ID查询工资条")
-    @PostMapping("/getWage")
+    @PostMapping("/getWageById")
     public ResultUtil getWageById(WagesDao wagesDao){
         return ResultUtil.success(wagesService.getById(wagesDao.getWagesId()));
     }
