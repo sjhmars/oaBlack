@@ -45,18 +45,25 @@ public class UserController {
         return personUserService.addUser(addUserDao,authentication);
     }
 
-    @ApiOperation("查询所有角色")
+    @ApiOperation("根据Id查询角色")
     @GetMapping("/selectAllRole")
     private ResultUtil selectAllRole(){
         List<RoleEntity> roleEntityList = myRoleService.list();
         return ResultUtil.success(roleEntityList);
     }
 
-    @ApiOperation("查询所有员工信息")
-    @GetMapping("/selectAllPeople")
-    private ResultUtil selectAllUser(@RequestBody UserDao userDao){
+    @ApiOperation("根据员工查询信息")
+    @GetMapping("/selectPeopleById")
+    private ResultUtil selectPeopleById(@RequestBody UserDao userDao){
         UserAndDepartmentVo userAndDepartmentVo = personUserService.selectUserById(userDao.getUserId());
         return ResultUtil.success(userAndDepartmentVo);
+    }
+
+    @ApiOperation("根据员工查询信息")
+    @GetMapping("/selectAllPeople")
+    private ResultUtil selectAllPeople(){
+        List<UserAndDepartmentVo> userAndDepartmentVos = personUserService.selectAllPeople();
+        return ResultUtil.success(userAndDepartmentVos);
     }
 
     @ApiOperation("更新员工信息")

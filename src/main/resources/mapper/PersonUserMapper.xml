@@ -9,4 +9,7 @@
     <select id="selectUserVoById" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
         select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user where user_id = #{userId}
     </select>
+    <select id="selectAllUser" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
+        select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user
+    </select>
 </mapper>

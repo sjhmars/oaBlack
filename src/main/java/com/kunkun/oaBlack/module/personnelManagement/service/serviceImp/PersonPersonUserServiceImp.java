@@ -174,4 +174,27 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         }
         return null;
     }
+
+    @Override
+    public List<UserAndDepartmentVo> selectAllPeople() {
+        List<UserVo> userVos = personUserMapper.selectAllUser();
+        List<UserAndDepartmentVo> userAndDepartmentVos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(userVos)) {
+            // 进行拆解封装 转换成DepartmentTreeVo
+            userAndDepartmentVos = userVos.stream().map(userVo -> {
+                UserAndDepartmentVo userAndDepartmentVo = new UserAndDepartmentVo();
+                userAndDepartmentVo.setEmail(userVo.getEmail());
+                userAndDepartmentVo.setMobile(userVo.getMobile());
+                userAndDepartmentVo.setUserId(userVo.getUserId());
+                userAndDepartmentVo.setUserName(userVo.getUserName());
+                userAndDepartmentVo.setWork_status(userVo.getWork_status());
+                String departmentName = departmentService.getDepartmentName(userVo.getDepartmentId());
+                String postName = postMapper.selectPostName(userVo.getPostId());
+                String departmentNameAndPostName = departmentName+postName;
+                userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
+                return userAndDepartmentVo;
+            }).collect(Collectors.toList());
+        }
+        return userAndDepartmentVos;
+    }
 }
