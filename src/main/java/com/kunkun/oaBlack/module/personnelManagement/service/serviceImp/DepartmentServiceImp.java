@@ -44,7 +44,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
     @Override
     @Transactional
-    @CacheEvict(value = "DepartmentUserTree")
+    @CacheEvict(value = "DepartmentUserTree",allEntries=true)
     public ResultUtil addDepartment(AddDepartmentDao departmentDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -160,7 +160,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
     }
 
     @Override
-    public DepartmentEnitly updataHeadUserId() {
+    public DepartmentEnitly updataHeadUserId(Integer UserId,Authentication authentication) {
         return null;
     }
 

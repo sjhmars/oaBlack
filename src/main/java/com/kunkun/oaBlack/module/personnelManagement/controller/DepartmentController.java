@@ -56,6 +56,7 @@ public class DepartmentController {
     }
 
     @ApiOperation("更改负责人")
+    @PostMapping("updateHeadUser")
     public ResultUtil updataHeadUserId(){
         return null;
     }

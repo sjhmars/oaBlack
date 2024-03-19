@@ -10,9 +10,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/wages")
@@ -30,13 +30,28 @@ public class WagesController {
 
     @ApiOperation("根据ID查询工资条")
     @PostMapping("/getWageById")
-    public ResultUtil getWageById(WagesDao wagesDao){
+    public ResultUtil getWageById(@RequestBody WagesDao wagesDao){
         return ResultUtil.success(wagesService.getById(wagesDao.getWagesId()));
+    }
+
+    @ApiOperation("查询自己的工资")
+    @GetMapping("/getMyWage")
+    public ResultUtil getMyWage(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        List<WagesEntity> wagesEntity = wagesService.getMyWages(authentication);
+        return ResultUtil.success(wagesEntity);
+    }
+
+    @ApiOperation("根据名字查询工资")
+    @PostMapping("/getWageByName")
+    public ResultUtil getWageByName(@RequestBody String userName){
+        List<WagesEntity> wagesEntities = wagesService.selectByName(userName);
+        return ResultUtil.success(wagesEntities);
     }
 
     @ApiOperation("开工资")
     @PostMapping("/addWage")
-    public ResultUtil addWage(WagesDao wagesDao){
+    public ResultUtil addWage(@RequestBody WagesDao wagesDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         WagesEntity wagesEntity = wagesService.addWages(wagesDao,authentication);
         if (ObjectUtil.isNotNull(wagesEntity)){

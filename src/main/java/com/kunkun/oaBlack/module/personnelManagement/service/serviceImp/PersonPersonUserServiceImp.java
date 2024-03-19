@@ -63,7 +63,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
 
     @Override
     @Transactional
-    @CacheEvict(value = "DepartmentUserTree")
+    @CacheEvict(value = "DepartmentUserTree",allEntries=true)
     public ResultUtil addUser(AddUserDao addUserDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -133,7 +133,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     }
 
     @Override
-    @CacheEvict(value = "DepartmentUserTree")
+    @CacheEvict(value = "DepartmentUserTree",allEntries = true)
     @CachePut(value = "user", key = "updateUserDao.userId",unless="#result==null")
     public UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication) {
         UserEnity userEnity = selectByIdMy(updateUserDao.getUserId());

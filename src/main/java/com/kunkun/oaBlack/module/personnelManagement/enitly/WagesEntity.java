@@ -25,6 +25,9 @@ public class WagesEntity {
     @TableField("user_id")
     private Integer userId;
 
+    @TableField("user_name")
+    private String userName;
+
     @TableField("create_time")
     private Date createTime;
 

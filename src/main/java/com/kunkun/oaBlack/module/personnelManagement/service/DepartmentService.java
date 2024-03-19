@@ -17,5 +17,5 @@ public interface DepartmentService extends IService<DepartmentEnitly> {
     String getDepartmentName(Integer DepartmentId);
     String getOneName(Integer DepartmentId);
     List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree();
-    DepartmentEnitly updataHeadUserId();
+    DepartmentEnitly updataHeadUserId(Integer UserId,Authentication authentication);
 }
