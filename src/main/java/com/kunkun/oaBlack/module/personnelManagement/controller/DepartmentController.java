@@ -1,8 +1,10 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddDepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.DepartmentDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeUserVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.DepartmentTreeVo;
@@ -50,8 +52,8 @@ public class DepartmentController {
 
     @ApiOperation("返回组织架构")
     @GetMapping("/selectDepartmentUserTree")
-    public ResultUtil selectDepartmentUserTree(){
-        List<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree();
+    public ResultUtil selectDepartmentUserTree(@RequestBody PagesDao pagesDao){
+        IPage<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree(pagesDao);
         return ResultUtil.success(departmentTreeUserVos);
     }
 

@@ -2,9 +2,12 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.common.util.ResultUtil;
+import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddDepartmentDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly;
@@ -128,8 +131,13 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
     }
 
     @Override
-    public List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree() {
-        List<DepartmentEnitly> departmentEnitlies = departmentMapper.selectAll();
+    public IPage<DepartmentTreeUserVo> getDepartmentTreeUserVoTree(PagesDao pagesDao) {
+        if (pagesDao.getPageSize() == null){
+            pagesDao.setPageSize(10);
+        }
+        Page<DepartmentEnitly> departmentEnitlyPage = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
+        IPage<DepartmentEnitly> departmentEnitliePages = departmentMapper.selectPageAll(departmentEnitlyPage);
+        List<DepartmentEnitly> departmentEnitlies = departmentEnitliePages.getRecords();
         List<DepartmentTreeUserVo> departmentTreeUserVoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(departmentEnitlies)) {
             // 进行拆解封装 转换成DepartmentTreeVo
@@ -156,7 +164,13 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         if (departmentTreeUserVos.isEmpty()){
             departmentTreeUserVos = departmentTreeUserVoList;
         }
-        return departmentTreeUserVos;
+        IPage<DepartmentTreeUserVo> departmentTreeUserVoIPage = new Page<>();
+        departmentTreeUserVoIPage.setCurrent(departmentEnitliePages.getCurrent())
+                .setRecords(departmentTreeUserVos)
+                .setPages(departmentEnitliePages.getPages())
+                .setSize(departmentEnitliePages.getSize())
+                .setTotal(departmentEnitliePages.getTotal());
+        return departmentTreeUserVoIPage;
     }
 
     @Override

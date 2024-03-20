@@ -4,4 +4,8 @@
     <select id="selectAll" resultType="com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly">
         select * from  t_department
     </select>
+    <select id="selectPageAll"
+            resultType="com.kunkun.oaBlack.module.personnelManagement.enitly.DepartmentEnitly">
+        select * from  t_department
+    </select>
 </mapper>

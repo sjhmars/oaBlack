@@ -27,6 +27,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
     @Autowired
     private WagesMapper wagesMapper;
 
+    @Autowired
     private PersonUserService personUserService;
 
     @Override
@@ -64,7 +65,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
 
     @Override
     public List<WagesEntity> selectByName(String userName) {
-        List<WagesEntity> wagesEntities = wagesMapper.selectList(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserName,userName));
+        List<WagesEntity> wagesEntities = wagesMapper.selectList(new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,userName));
         return wagesEntities;
     }
 }
