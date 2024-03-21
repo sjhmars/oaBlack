@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_check")
-public class checkEntity {
+public class CheckEntity {
 
     @TableId(type = IdType.AUTO,value = "check_id")
     private Integer checkId;
