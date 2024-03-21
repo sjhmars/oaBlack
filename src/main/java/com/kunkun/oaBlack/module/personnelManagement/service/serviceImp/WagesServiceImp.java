@@ -64,18 +64,21 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         String tokenValue = details.getTokenValue();
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
-        WagesEntity wagesEntitys = wagesMapper.selectById(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
+        WagesEntity wagesEntitys = wagesMapper.selectOne(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
         MyWageVo wageVo = new MyWageVo();
-        wageVo.setBasicSalary(wagesEntitys.getBasicSalary());
-        wageVo.setCreateTime(wagesEntitys.getCreateTime().getTime());
-        wageVo.setLoseMoney(wagesEntitys.getLoseMoney());
-        wageVo.setMealSupplement(wagesEntitys.getMealSupplement());
-        wageVo.setPerformance(wagesEntitys.getPerformance());
-        wageVo.setUserId(wagesEntitys.getUserId());
-        wageVo.setUserName(wagesEntitys.getUserName());
-        wageVo.setWagesId(wagesEntitys.getWagesId());
-        wageVo.setTotal(wagesEntitys.getBasicSalary()+wagesEntitys.getMealSupplement()+wagesEntitys.getPerformance());
-        return wageVo;
+        if(wagesEntitys!=null){
+            wageVo.setBasicSalary(wagesEntitys.getBasicSalary());
+            wageVo.setCreateTime(wagesEntitys.getCreateTime().getTime());
+            wageVo.setLoseMoney(wagesEntitys.getLoseMoney());
+            wageVo.setMealSupplement(wagesEntitys.getMealSupplement());
+            wageVo.setPerformance(wagesEntitys.getPerformance());
+            wageVo.setUserId(wagesEntitys.getUserId());
+            wageVo.setUserName(wagesEntitys.getUserName());
+            wageVo.setWagesId(wagesEntitys.getWagesId());
+            wageVo.setTotal(wagesEntitys.getBasicSalary()+wagesEntitys.getMealSupplement()+wagesEntitys.getPerformance());
+            return wageVo;
+        }
+        return null;
     }
 
     @Override
