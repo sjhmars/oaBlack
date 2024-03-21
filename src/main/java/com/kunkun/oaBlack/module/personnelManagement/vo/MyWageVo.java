@@ -22,7 +22,7 @@ public class MyWageVo {
 
     private String userName;
 
-    private Date createTime;
+    private Long createTime;
 
     private Integer mealSupplement;
 

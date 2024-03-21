@@ -67,7 +67,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         WagesEntity wagesEntitys = wagesMapper.selectById(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
         MyWageVo wageVo = new MyWageVo();
         wageVo.setBasicSalary(wagesEntitys.getBasicSalary());
-        wageVo.setCreateTime(wagesEntitys.getCreateTime());
+        wageVo.setCreateTime(wagesEntitys.getCreateTime().getTime());
         wageVo.setLoseMoney(wagesEntitys.getLoseMoney());
         wageVo.setMealSupplement(wagesEntitys.getMealSupplement());
         wageVo.setPerformance(wagesEntitys.getPerformance());
