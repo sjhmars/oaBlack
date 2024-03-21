@@ -7,7 +7,7 @@
         from t_user left join  t_post on t_user.post_id = t_post.post_id where t_user.department_id = #{departmentId}
     </select>
     <select id="selectUserVoById" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
-        select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user where user_id = #{userId}
+        select user_id,user_name,email,mobile,birth,work_status,department_id,post_id,sex,department_name,post_name,role_name from t_user where user_id = #{userId}
     </select>
     <select id="selectAllUser" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
         select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user

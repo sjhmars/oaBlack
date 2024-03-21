@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kunkun.oaBlack.module.personnelManagement.mapper.WagesMapper">
+    <select id="selectAllPage" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo">
+        SELECT t_wages.wages_id, t_wages.basic_salary, t_wages.performance, t_wages.meal_supplement, t_wages.user_id, t_wages.user_name, t_wages.create_time,t_department.department_name,t_post.post_name
+        FROM t_wages
+        LEFT JOIN t_user ON t_wages.user_id = t_user.user_id
+        LEFT JOIN t_department ON t_user.department_id = t_department.department_id
+        LEFT JOIN t_post ON t_user.post_id = t_post.post_id
+    </select>
+</mapper>

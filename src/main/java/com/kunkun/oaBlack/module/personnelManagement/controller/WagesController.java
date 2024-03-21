@@ -9,6 +9,7 @@ import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.MyWageVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,11 +31,8 @@ public class WagesController {
     @ApiOperation("查询所有工资条")
     @PostMapping("/getWage")
     public ResultUtil getWage(@RequestBody PagesDao pagesDao){
-        if (pagesDao.getPageSize() == null){
-            pagesDao.setPageSize(10);
-        }
-        Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
-        return ResultUtil.success(wagesService.page(wagesEntityPage));
+        IPage<AllWageVo> wagesEntityPage = wagesService.selectAllWages(pagesDao);
+        return ResultUtil.success(wagesEntityPage);
     }
 
     @ApiOperation("根据ID查询工资条")
@@ -44,10 +42,10 @@ public class WagesController {
     }
 
     @ApiOperation("查询自己的工资")
-    @GetMapping("/getMyWage")
-    public ResultUtil getMyWage(){
+    @PostMapping("/getMyWage")
+    public ResultUtil getMyWage(@RequestBody PagesDao pagesDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        MyWageVo myWage = wagesService.getMyWages(authentication);
+        IPage<MyWageVo> myWage = wagesService.getMyWages(authentication,pagesDao);
         return ResultUtil.success(myWage);
     }
 

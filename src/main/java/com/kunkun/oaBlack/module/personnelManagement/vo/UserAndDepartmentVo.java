@@ -25,4 +25,11 @@ public class UserAndDepartmentVo {
 
     private String  departmentAndPost;
 
+    private Integer sex;
+
+    private String departmentName;
+
+    private String postName;
+
+    private String roleName;
 }
