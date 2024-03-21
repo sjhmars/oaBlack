@@ -2,6 +2,7 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
@@ -12,6 +13,7 @@ import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.WagesMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.MyWageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,8 +22,10 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> implements WagesService {
@@ -59,24 +63,39 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
     }
 
     @Override
-    public MyWageVo getMyWages(Authentication authentication) {
+    public IPage<MyWageVo> getMyWages(Authentication authentication,PagesDao pagesDao) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
-        WagesEntity wagesEntitys = wagesMapper.selectOne(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
-        MyWageVo wageVo = new MyWageVo();
-        if(wagesEntitys!=null){
-            wageVo.setBasicSalary(wagesEntitys.getBasicSalary());
-            wageVo.setCreateTime(wagesEntitys.getCreateTime().getTime());
-            wageVo.setLoseMoney(wagesEntitys.getLoseMoney());
-            wageVo.setMealSupplement(wagesEntitys.getMealSupplement());
-            wageVo.setPerformance(wagesEntitys.getPerformance());
-            wageVo.setUserId(wagesEntitys.getUserId());
-            wageVo.setUserName(wagesEntitys.getUserName());
-            wageVo.setWagesId(wagesEntitys.getWagesId());
-            wageVo.setTotal(wagesEntitys.getBasicSalary()+wagesEntitys.getMealSupplement()+wagesEntitys.getPerformance());
-            return wageVo;
+        if (pagesDao.getPageSize() == null){
+            pagesDao.setPageSize(10);
+        }
+        Page<WagesEntity> page = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
+        Page<WagesEntity> wagesEntityPage = wagesMapper.selectPage(page,new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
+        List<WagesEntity> wagesEntities = wagesEntityPage.getRecords();
+        List<MyWageVo> wageVos = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(wagesEntities)){
+            wageVos = wagesEntities.stream().map(wagesEntity -> {
+                MyWageVo wageVo = new MyWageVo();
+                wageVo.setBasicSalary(wagesEntity.getBasicSalary());
+                wageVo.setCreateTime(wagesEntity.getCreateTime().getTime());
+                wageVo.setLoseMoney(wagesEntity.getLoseMoney());
+                wageVo.setMealSupplement(wagesEntity.getMealSupplement());
+                wageVo.setPerformance(wagesEntity.getPerformance());
+                wageVo.setUserId(wagesEntity.getUserId());
+                wageVo.setUserName(wagesEntity.getUserName());
+                wageVo.setWagesId(wagesEntity.getWagesId());
+                wageVo.setTotal(wagesEntity.getBasicSalary()+wagesEntity.getMealSupplement()+wagesEntity.getPerformance());
+                return wageVo;
+            }).collect(Collectors.toList());
+            IPage<MyWageVo> myWageVoIPage = new Page<>();
+            myWageVoIPage.setTotal(wagesEntityPage.getTotal());
+            myWageVoIPage.setSize(wagesEntityPage.getSize());
+            myWageVoIPage.setPages(wagesEntityPage.getPages());
+            myWageVoIPage.setRecords(wageVos);
+            myWageVoIPage.setCurrent(wagesEntityPage.getCurrent());
+            return myWageVoIPage;
         }
         return null;
     }
@@ -89,5 +108,15 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
         IPage<WagesEntity> wagesEntityIPage = wagesMapper.selectPage(wagesEntityPage, new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,pagesDao.getName()));
         return wagesEntityIPage;
+    }
+
+    @Override
+    public IPage<AllWageVo> selectAllWages(PagesDao pagesDao) {
+        if (pagesDao.getPageSize() == null){
+            pagesDao.setPageSize(10);
+        }
+        Page<AllWageVo> page = new Page<AllWageVo>(pagesDao.getPageNumber(),pagesDao.getPageSize());
+        IPage<AllWageVo> allWageVoIPage = wagesMapper.selectAllPage(page);
+        return allWageVoIPage;
     }
 }
