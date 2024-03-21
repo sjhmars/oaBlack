@@ -1,10 +1,15 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kunkun.oaBlack.common.util.ResultUtil;
+import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.MyWageVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/wages")
-@Api("工资模块")
+@Api(tags = "工资模块")
 public class WagesController {
 
     @Autowired
@@ -24,8 +29,12 @@ public class WagesController {
 
     @ApiOperation("查询所有工资条")
     @PostMapping("/getWage")
-    public ResultUtil getWage(){
-        return ResultUtil.success(wagesService.list());
+    public ResultUtil getWage(@RequestBody PagesDao pagesDao){
+        if (pagesDao.getPageSize() == null){
+            pagesDao.setPageSize(10);
+        }
+        Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
+        return ResultUtil.success(wagesService.page(wagesEntityPage));
     }
 
     @ApiOperation("根据ID查询工资条")
@@ -38,15 +47,15 @@ public class WagesController {
     @GetMapping("/getMyWage")
     public ResultUtil getMyWage(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        List<WagesEntity> wagesEntity = wagesService.getMyWages(authentication);
-        return ResultUtil.success(wagesEntity);
+        MyWageVo myWage = wagesService.getMyWages(authentication);
+        return ResultUtil.success(myWage);
     }
 
     @ApiOperation("根据名字查询工资")
     @PostMapping("/getWageByName")
-    public ResultUtil getWageByName(@RequestBody String userName){
-        List<WagesEntity> wagesEntities = wagesService.selectByName(userName);
-        return ResultUtil.success(wagesEntities);
+    public ResultUtil getWageByName(@RequestBody WageNameDao wageNameDao){
+        IPage<WagesEntity> wagesEntityIPage = wagesService.selectByName(wageNameDao);
+        return ResultUtil.success(wagesEntityIPage);
     }
 
     @ApiOperation("开工资")

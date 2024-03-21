@@ -131,13 +131,8 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
     }
 
     @Override
-    public IPage<DepartmentTreeUserVo> getDepartmentTreeUserVoTree(PagesDao pagesDao) {
-        if (pagesDao.getPageSize() == null){
-            pagesDao.setPageSize(10);
-        }
-        Page<DepartmentEnitly> departmentEnitlyPage = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
-        IPage<DepartmentEnitly> departmentEnitliePages = departmentMapper.selectPageAll(departmentEnitlyPage);
-        List<DepartmentEnitly> departmentEnitlies = departmentEnitliePages.getRecords();
+    public List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree() {
+        List<DepartmentEnitly> departmentEnitlies = departmentMapper.selectAll();
         List<DepartmentTreeUserVo> departmentTreeUserVoList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(departmentEnitlies)) {
             // 进行拆解封装 转换成DepartmentTreeVo
@@ -164,13 +159,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         if (departmentTreeUserVos.isEmpty()){
             departmentTreeUserVos = departmentTreeUserVoList;
         }
-        IPage<DepartmentTreeUserVo> departmentTreeUserVoIPage = new Page<>();
-        departmentTreeUserVoIPage.setCurrent(departmentEnitliePages.getCurrent())
-                .setRecords(departmentTreeUserVos)
-                .setPages(departmentEnitliePages.getPages())
-                .setSize(departmentEnitliePages.getSize())
-                .setTotal(departmentEnitliePages.getTotal());
-        return departmentTreeUserVoIPage;
+        return departmentTreeUserVos;
     }
 
     @Override

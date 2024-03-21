@@ -1,13 +1,18 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.WagesMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.MyWageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -54,18 +59,29 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
     }
 
     @Override
-    public List<WagesEntity> getMyWages(Authentication authentication) {
+    public MyWageVo getMyWages(Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
-        List<WagesEntity> wagesEntitys = wagesMapper.selectList(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
-        return wagesEntitys;
+        WagesEntity wagesEntitys = wagesMapper.selectById(new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
+        MyWageVo wageVo = new MyWageVo();
+        wageVo.setBasicSalary(wagesEntitys.getBasicSalary());
+        wageVo.setCreateTime(wagesEntitys.getCreateTime());
+        wageVo.setLoseMoney(wagesEntitys.getLoseMoney());
+        wageVo.setMealSupplement(wagesEntitys.getMealSupplement());
+        wageVo.setPerformance(wagesEntitys.getPerformance());
+        wageVo.setUserId(wagesEntitys.getUserId());
+        wageVo.setUserName(wagesEntitys.getUserName());
+        wageVo.setWagesId(wagesEntitys.getWagesId());
+        wageVo.setTotal(wagesEntitys.getBasicSalary()+wagesEntitys.getMealSupplement()+wagesEntitys.getPerformance());
+        return wageVo;
     }
 
     @Override
-    public List<WagesEntity> selectByName(String userName) {
-        List<WagesEntity> wagesEntities = wagesMapper.selectList(new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,userName));
-        return wagesEntities;
+    public IPage<WagesEntity> selectByName(WageNameDao pagesDao) {
+        Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
+        IPage<WagesEntity> wagesEntityIPage = wagesMapper.selectPage(wagesEntityPage, new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,pagesDao.getName()));
+        return wagesEntityIPage;
     }
 }

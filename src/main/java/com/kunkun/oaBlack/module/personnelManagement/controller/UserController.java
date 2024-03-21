@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
-@Api("用户模块")
+@Api(tags = "用户模块")
 public class UserController {
     @Autowired
     private PersonUserService personUserService;

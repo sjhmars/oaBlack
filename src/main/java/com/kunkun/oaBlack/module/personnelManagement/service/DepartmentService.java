@@ -18,6 +18,6 @@ public interface DepartmentService extends IService<DepartmentEnitly> {
     List<DepartmentTreeVo> getDepartmentTree(Authentication authentication);
     String getDepartmentName(Integer DepartmentId);
     String getOneName(Integer DepartmentId);
-    IPage<DepartmentTreeUserVo> getDepartmentTreeUserVoTree(PagesDao pagesDao);
+    List<DepartmentTreeUserVo> getDepartmentTreeUserVoTree();
     DepartmentEnitly updataHeadUserId(Integer UserId,Authentication authentication);
 }

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/Department")
-@Api("部门管理模块")
+@Api(tags = "部门管理模块")
 public class DepartmentController {
 
     @Autowired
@@ -52,8 +52,8 @@ public class DepartmentController {
 
     @ApiOperation("返回组织架构")
     @GetMapping("/selectDepartmentUserTree")
-    public ResultUtil selectDepartmentUserTree(@RequestBody PagesDao pagesDao){
-        IPage<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree(pagesDao);
+    public ResultUtil selectDepartmentUserTree(){
+        List<DepartmentTreeUserVo> departmentTreeUserVos = departmentService.getDepartmentTreeUserVoTree();
         return ResultUtil.success(departmentTreeUserVos);
     }
 

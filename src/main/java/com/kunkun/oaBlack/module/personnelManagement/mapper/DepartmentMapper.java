@@ -14,5 +14,5 @@ import java.util.List;
 @Repository
 public interface DepartmentMapper extends BaseMapper<DepartmentEnitly> {
     List<DepartmentEnitly> selectAll();
-    IPage<DepartmentEnitly> selectPageAll(IPage page);
+    List<DepartmentEnitly> selectPageAll(IPage page);
 }
