@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @ApiOperation("根据员工查询信息")
-    @GetMapping("/selectPeopleById")
+    @PostMapping("/selectPeopleById")
     private ResultUtil selectPeopleById(@RequestBody UserDao userDao){
         UserAndDepartmentVo userAndDepartmentVo = personUserService.selectUserById(userDao.getUserId());
         return ResultUtil.success(userAndDepartmentVo);

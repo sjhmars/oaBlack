@@ -83,6 +83,9 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
 
     @Override
     public IPage<WagesEntity> selectByName(WageNameDao pagesDao) {
+        if (pagesDao.getPageSize() == null){
+            pagesDao.setPageSize(10);
+        }
         Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
         IPage<WagesEntity> wagesEntityIPage = wagesMapper.selectPage(wagesEntityPage, new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,pagesDao.getName()));
         return wagesEntityIPage;
