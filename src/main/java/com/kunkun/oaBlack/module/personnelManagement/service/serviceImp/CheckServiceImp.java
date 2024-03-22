@@ -33,17 +33,26 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
     @Autowired
     private TokenStore jwtTokenStore;
 
-    @Scheduled(cron = "0 0 0 * * 1-5")
+    @Scheduled(cron = "0 0 1 * * 1-5")
     public void doSomething() {
         //首先查询出所有的员工
         List<UserEnity> userEnityList = personUserService.list();
+
+        Calendar calendarNew = Calendar.getInstance();
+        calendarNew.setTime(new Date());
+        calendarNew.set(Calendar.HOUR_OF_DAY,0);
+        calendarNew.set(Calendar.MINUTE,0);
+        calendarNew.set(Calendar.SECOND,0);
+        Date thisDateZro = calendarNew.getTime();
+
+
         userEnityList.forEach( userEnity ->{
             Integer id = userEnity.getUserId();
             //创建一个考勤实体
             CheckEntity checkEntity = new CheckEntity();
             //设置参数
             checkEntity.setUserId(id);
-            checkEntity.setThisDate(new Date());
+            checkEntity.setThisDate(thisDateZro);
             checkEntity.setUserName(userEnity.getUserName());
             //查询当前用户是否在请假中
 //            Leaves leaves = leavesService.queryIsLeaves(id, LocalDateTime.now());
