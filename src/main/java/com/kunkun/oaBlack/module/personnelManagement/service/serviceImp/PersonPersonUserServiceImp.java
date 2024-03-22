@@ -136,6 +136,11 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     @CacheEvict(value = "DepartmentUserTree",allEntries = true)
     @CachePut(value = "user", key = "updateUserDao.userId",unless="#result==null")
     public UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
         UserEnity userEnity = selectByIdMy(updateUserDao.getUserId());
         if (ObjectUtil.isNotNull(updateUserDao.getBirth())){
             userEnity.setBirth(updateUserDao.getBirth());
@@ -169,6 +174,8 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
             String passwordEncoder =  bCryptPasswordEncoder.encode(updateUserDao.getUserPassword());
             userEnity.setUserPassword(passwordEncoder);
         }
+        userEnity.setUpdateTime(new Date());
+        userEnity.setUpdateId(userId);
         if (update(userEnity,new LambdaUpdateWrapper<UserEnity>().eq(UserEnity::getUserId,userEnity.getUserId()))){
             return userEnity;
         }

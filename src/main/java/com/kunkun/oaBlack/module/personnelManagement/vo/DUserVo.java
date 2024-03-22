@@ -18,7 +18,7 @@ public class DUserVo {
 
     private String userName;
 
-    private Date createTime;
+    private Long createTime;
 
     private String address;
 
@@ -30,7 +30,7 @@ public class DUserVo {
 
     private Integer status;
 
-    private Date birth;
+    private Long birth;
 
     private String roleName;
 

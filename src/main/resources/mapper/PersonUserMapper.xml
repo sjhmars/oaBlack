@@ -3,8 +3,25 @@
 <mapper namespace="com.kunkun.oaBlack.module.personnelManagement.mapper.PersonUserMapper">
 
     <select id="selectAllByDepartmentId" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.DUserVo">
-        select user_id,user_name,t_user.create_time,address,email,mobile,sex,status,birth,role_name,nickname,work_status,post_name
-        from t_user left join  t_post on t_user.post_id = t_post.post_id where t_user.department_id = #{departmentId}
+        SELECT
+	        user_id,
+	        user_name,
+	        REPLACE ( UNIX_TIMESTAMP( t_user.create_time )* 1000, '.', '' ) AS create_time,
+	        address,
+	        email,
+	        mobile,
+	        sex,
+	        STATUS,
+	        REPLACE ( UNIX_TIMESTAMP( birth )* 1000, '.', '' ) AS birth,
+	        role_name,
+	        nickname,
+	        work_status,
+	        post_name
+        FROM
+	        t_user
+	        LEFT JOIN t_post ON t_user.post_id = t_post.post_id
+        WHERE
+	        t_user.department_id = #{departmentId}
     </select>
     <select id="selectUserVoById" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
         select t_user.user_id,user_name,email,mobile,birth,work_status,t_user.department_id,t_user.post_id,sex,department_name,post_name,role_name
