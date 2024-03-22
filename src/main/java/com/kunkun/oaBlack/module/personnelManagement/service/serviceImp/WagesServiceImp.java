@@ -1,6 +1,6 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -72,7 +72,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
             pagesDao.setPageSize(10);
         }
         Page<WagesEntity> page = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
-        Page<WagesEntity> wagesEntityPage = wagesMapper.selectPage(page,new LambdaUpdateWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
+        Page<WagesEntity> wagesEntityPage = wagesMapper.selectPage(page,new LambdaQueryWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
         List<WagesEntity> wagesEntities = wagesEntityPage.getRecords();
         List<MyWageVo> wageVos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(wagesEntities)){
@@ -106,7 +106,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
             pagesDao.setPageSize(10);
         }
         Page<WagesEntity> wagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
-        IPage<WagesEntity> wagesEntityIPage = wagesMapper.selectPage(wagesEntityPage, new LambdaUpdateWrapper<WagesEntity>().like(WagesEntity::getUserName,pagesDao.getName()));
+        IPage<WagesEntity> wagesEntityIPage = wagesMapper.selectPage(wagesEntityPage, new LambdaQueryWrapper<WagesEntity>().like(WagesEntity::getUserName,pagesDao.getName()));
         return wagesEntityIPage;
     }
 

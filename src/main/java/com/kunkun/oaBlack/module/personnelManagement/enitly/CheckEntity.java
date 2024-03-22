@@ -48,4 +48,7 @@ public class CheckEntity {
 
     @TableField("leave_status")
     private Integer leaveStatus;
+
+    @TableField("address")
+    private String address;
 }
