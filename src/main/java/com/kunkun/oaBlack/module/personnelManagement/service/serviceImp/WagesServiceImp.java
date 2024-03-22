@@ -8,14 +8,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WagesDao;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.TempWagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.WagesMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
+import com.kunkun.oaBlack.module.personnelManagement.service.TempWagesService;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
 import com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.MyWageVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -38,6 +41,9 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
 
     @Autowired
     private PersonUserService personUserService;
+
+    @Autowired
+    private TempWagesService tempWagesService;
 
     @Override
     public WagesEntity addWages(WagesDao wagesDao, Authentication authentication) {
@@ -118,5 +124,24 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         Page<AllWageVo> page = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
         IPage<AllWageVo> allWageVoIPage = wagesMapper.selectAllPage(page);
         return allWageVoIPage;
+    }
+
+    @Scheduled(cron = "0 0 2 15 * *")
+    public void giveWage(){
+        List<TempWagesEntity> tempWagesEntities = tempWagesService.list(new LambdaQueryWrapper<TempWagesEntity>().eq(TempWagesEntity::getIsDelete,0));
+        if (CollectionUtils.isNotEmpty(tempWagesEntities)){
+            for (TempWagesEntity tempWagesEntity: tempWagesEntities) {
+                WagesEntity wagesEntity = new WagesEntity();
+                wagesEntity.setUserName(tempWagesEntity.getUserName());
+                wagesEntity.setUserId(tempWagesEntity.getUserId());
+                wagesEntity.setPerformance(tempWagesEntity.getPerformance());
+                wagesEntity.setMealSupplement(tempWagesEntity.getMealSupplement());
+                wagesEntity.setBasicSalary(tempWagesEntity.getBasicSalary());
+                wagesEntity.setIsDelete(0);
+                wagesEntity.setCreateUserId(1);
+                wagesEntity.setCreateTime(new Date());
+                wagesMapper.insert(wagesEntity);
+            }
+        }
     }
 }
