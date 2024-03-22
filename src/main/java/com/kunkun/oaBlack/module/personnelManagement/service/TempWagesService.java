@@ -8,4 +8,5 @@ import org.springframework.security.core.Authentication;
 
 public interface TempWagesService extends IService<TempWagesEntity> {
     TempWagesEntity setTempWages(Authentication authentication, TempWagesDao tempWagesDao);
+    TempWagesEntity updateAllById(Authentication authentication, TempWagesDao tempWagesDao);
 }

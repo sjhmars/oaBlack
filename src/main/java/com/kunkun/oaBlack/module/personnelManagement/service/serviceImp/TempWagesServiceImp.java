@@ -1,5 +1,6 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.TempWagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.TempWagesEntity;
@@ -9,10 +10,13 @@ import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
 import com.kunkun.oaBlack.module.personnelManagement.service.TempWagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesEntity> implements TempWagesService {
@@ -45,5 +49,30 @@ public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesE
 
         tempWagesMapper.insert(tempWagesEntity);
         return tempWagesEntity;
+    }
+
+    @Override
+    public TempWagesEntity updateAllById(Authentication authentication, TempWagesDao tempWagesDao) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
+        TempWagesEntity tempWagesEntity = tempWagesMapper.selectOne(new LambdaUpdateWrapper<TempWagesEntity>()
+                .eq(TempWagesEntity::getTempWagesId,tempWagesDao.getTempWagesId())
+                .eq(TempWagesEntity::getIsDelete,0));
+        if (tempWagesDao.getBasicSalary()!=null){
+            tempWagesEntity.setBasicSalary(tempWagesDao.getBasicSalary());
+        }
+        if (tempWagesDao.getMealSupplement()!=null){
+            tempWagesEntity.setMealSupplement(tempWagesDao.getMealSupplement());
+        }
+        if (tempWagesDao.getPerformance()!=null){
+            tempWagesEntity.setPerformance(tempWagesDao.getPerformance());
+        }
+        tempWagesEntity.setUpdateByUserId(userId);
+        tempWagesEntity.setUpdateTime(new Date());
+        tempWagesMapper.update(tempWagesEntity,new LambdaUpdateWrapper<TempWagesEntity>().eq(TempWagesEntity::getTempWagesId,tempWagesDao.getTempWagesId()));
+        return null;
     }
 }
