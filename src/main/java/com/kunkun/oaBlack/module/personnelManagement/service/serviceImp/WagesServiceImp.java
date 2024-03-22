@@ -115,7 +115,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         if (pagesDao.getPageSize() == null){
             pagesDao.setPageSize(10);
         }
-        Page<AllWageVo> page = new Page<AllWageVo>(pagesDao.getPageNumber(),pagesDao.getPageSize());
+        Page<AllWageVo> page = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
         IPage<AllWageVo> allWageVoIPage = wagesMapper.selectAllPage(page);
         return allWageVoIPage;
     }
