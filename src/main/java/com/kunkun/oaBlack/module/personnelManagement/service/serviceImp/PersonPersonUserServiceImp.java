@@ -2,6 +2,7 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -59,7 +60,10 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     @Override
     public UserEnity selectByIdMy(Integer userId) {
         System.out.println(userId);
-        return personUserMapper.selectById(userId);
+        return personUserMapper.selectOne(new LambdaQueryWrapper<UserEnity>()
+                .eq(UserEnity::getUserId,userId)
+                .eq(UserEnity::getStatus,1)
+        );
     }
 
     @Override
