@@ -136,6 +136,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     @Override
     @CacheEvict(value = "DepartmentUserTree",allEntries = true)
     @CachePut(value = "user", key = "updateUserDao.userId",unless="#result==null")
+    @Transactional
     public UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
