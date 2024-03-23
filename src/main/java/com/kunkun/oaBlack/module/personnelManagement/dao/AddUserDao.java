@@ -33,4 +33,7 @@ public class AddUserDao {
     private String userPassword;
 
     private Integer roleId;
+
+    @NotEmpty
+    private String email;
 }

@@ -35,4 +35,6 @@ public class UpdateUserDao {
     private Integer roleId;
 
     private String nikeName;
+
+    private String email;
 }

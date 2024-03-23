@@ -81,6 +81,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         userEnity.setWorkStatus(addUserDao.getWorkStatus());
         userEnity.setDepartmentId(addUserDao.getDepartmentId());
         userEnity.setPostId(addUserDao.getPostId());
+        userEnity.setEmail(addUserDao.getEmail());
         userEnity.setStatus(1);
 
         String roleName =  roleMapper.selectRoleName(addUserDao.getRoleId());
@@ -145,7 +146,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
 
-        UserEnity userEnity = null;
+        UserEnity userEnity;
 
         if (updateUserDao.getUserId() == null){
             userEnity = selectByIdMy(userId);
@@ -178,6 +179,9 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         }
         if (ObjectUtil.isNotNull(updateUserDao.getWorkStatus())){
             userEnity.setWorkStatus(updateUserDao.getWorkStatus());
+        }
+        if (ObjectUtil.isNotNull(updateUserDao.getEmail())){
+            userEnity.setEmail(updateUserDao.getEmail());
         }
         if (ObjectUtil.isNotNull(updateUserDao.getUserPassword())){
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
