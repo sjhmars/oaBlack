@@ -26,4 +26,12 @@ public class UserVo {
     private Integer departmentId;
 
     private Integer postId;
+
+    private Integer sex;
+
+    private String departmentName;
+
+    private String postName;
+
+    private String roleName;
 }

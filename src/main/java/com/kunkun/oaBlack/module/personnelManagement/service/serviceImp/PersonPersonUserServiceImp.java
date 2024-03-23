@@ -118,9 +118,11 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
             userAndDepartmentVo.setUserId(userVo.getUserId());
             userAndDepartmentVo.setUserName(userVo.getUserName());
             userAndDepartmentVo.setWork_status(userVo.getWork_status());
-            String departmentName = departmentService.getDepartmentName(userVo.getDepartmentId());
-            String postName = postMapper.selectPostName(userVo.getPostId());
-            String departmentNameAndPostName = departmentName+postName;
+            userAndDepartmentVo.setSex(userVo.getSex());
+            userAndDepartmentVo.setDepartmentName(userVo.getDepartmentName());
+            userAndDepartmentVo.setPostName(userVo.getPostName());
+            userAndDepartmentVo.setRoleName(userVo.getRoleName());
+            String departmentNameAndPostName = userAndDepartmentVo.getDepartmentName()+userAndDepartmentVo.getDepartmentName();
             userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
 
         }
@@ -143,7 +145,13 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
 
-        UserEnity userEnity = selectByIdMy(updateUserDao.getUserId());
+        UserEnity userEnity = null;
+
+        if (updateUserDao.getUserId() == null){
+            userEnity = selectByIdMy(userId);
+        }else {
+            userEnity = selectByIdMy(updateUserDao.getUserId());
+        }
         if (ObjectUtil.isNotNull(updateUserDao.getBirth())){
             userEnity.setBirth(updateUserDao.getBirth());
         }
