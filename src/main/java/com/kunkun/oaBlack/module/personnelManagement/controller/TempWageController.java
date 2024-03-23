@@ -1,6 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
@@ -59,17 +60,23 @@ public class TempWageController {
 
     @ApiOperation("查询所有工资模版")
     @PostMapping("/selectAllTempWage")
-    public ResultUtil selectAllTempWage(PagesDao pagesDao){
-        if (pagesDao.getPageSize()==null){
+    public ResultUtil selectAllTempWage(@RequestBody PagesDao pagesDao){
+        if (pagesDao.getPageSize() == null){
             pagesDao.setPageSize(10);
         }
+        System.out.println(pagesDao.getPageNumber());
+        System.out.println(pagesDao.getPageSize());
         Page<TempWagesEntity> tempWagesEntityPage = new Page<>(pagesDao.getPageNumber(), pagesDao.getPageSize());
-        return ResultUtil.success(tempWagesService.page(tempWagesEntityPage,new LambdaQueryWrapper<TempWagesEntity>().eq(TempWagesEntity::getIsDelete,0)));
+        IPage<TempWagesEntity> tempWagesEntityIPage = tempWagesService.page(tempWagesEntityPage,new LambdaQueryWrapper<TempWagesEntity>().eq(TempWagesEntity::getIsDelete,0));
+        if (tempWagesEntityIPage == null){
+            return ResultUtil.success("返回是空",null);
+        }
+        return ResultUtil.success(tempWagesEntityIPage);
     }
 
     @ApiOperation("根据用户id查询工资模板")
     @PostMapping("/selectTempWageById")
-    public ResultUtil selectTempWageById(Integer userId){
+    public ResultUtil selectTempWageById(@RequestBody Integer userId){
         return ResultUtil.success(tempWagesService.getOne(new LambdaQueryWrapper<TempWagesEntity>()
                 .eq(TempWagesEntity::getIsDelete,0).eq(TempWagesEntity::getUserId,userId)));
     }
