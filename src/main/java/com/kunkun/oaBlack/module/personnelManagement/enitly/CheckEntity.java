@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -26,13 +27,13 @@ public class CheckEntity {
     private String userName;
 
     @TableField(value = "this_date")
-    private Date thisDate;
+    private LocalDateTime thisDate;
 
     @TableField(value = "check_start_time")
-    private Date checkStartTime;
+    private LocalDateTime checkStartTime;
 
     @TableField(value = "check_end_time")
-    private Date checkEndTime;
+    private LocalDateTime checkEndTime;
 
     @TableField(value = "late_time")
     private String lateTime;
