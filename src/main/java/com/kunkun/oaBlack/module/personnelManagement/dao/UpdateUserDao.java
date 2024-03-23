@@ -13,7 +13,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class UpdateUserDao {
 
-    @NotEmpty
     private Integer userId;
 
     private String userName;
