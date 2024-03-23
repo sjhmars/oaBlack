@@ -18,4 +18,7 @@ public interface PersonUserService extends IService<UserEnity> {
     List<DUserVo> selectByDepartmentId(Integer departmentId);
     UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication);
     List<UserAndDepartmentVo> selectAllPeople();
+    ResultUtil deleteUser(Integer userId,Integer departmentId);
+    Integer getLoginUserId(Authentication authentication);
+    Integer getUserDepartmentId(Integer userId);
 }

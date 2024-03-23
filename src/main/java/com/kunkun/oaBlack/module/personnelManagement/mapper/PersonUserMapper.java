@@ -16,4 +16,5 @@ public interface PersonUserMapper extends BaseMapper<UserEnity> {
     UserVo selectUserVoById(@Param("userId")Integer userId);
     List<DUserVo> selectAllByDepartmentId(@Param("departmentId") Integer departmentId);
     List<UserVo> selectAllUser();
+    Integer getDepartmentIdByUser(@Param("userId")Integer userId);
 }

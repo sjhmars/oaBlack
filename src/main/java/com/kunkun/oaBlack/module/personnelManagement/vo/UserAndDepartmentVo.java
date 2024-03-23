@@ -21,7 +21,11 @@ public class UserAndDepartmentVo {
 
     private Long birth;
 
-    private String work_status;
+    private Integer work_status;
+
+    private Integer departmentId;
+
+    private Integer postId;
 
     private String  departmentAndPost;
 

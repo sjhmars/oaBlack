@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -50,8 +51,6 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     @Autowired
     private DepartmentService departmentService;
 
-    @Autowired
-    private PostMapper postMapper;
 
     @Autowired
     private TokenStore jwtTokenStore;
@@ -97,6 +96,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         userEnity.setUserPassword(passwordEncoder);
         try {
             if (personUserMapper.insert(userEnity)>0){
+                userEnity.setUserPassword(null);
                 return ResultUtil.success(userEnity);
             }
         }catch (Exception e){
@@ -122,13 +122,15 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
             userAndDepartmentVo.setMobile(userVo.getMobile());
             userAndDepartmentVo.setUserId(userVo.getUserId());
             userAndDepartmentVo.setUserName(userVo.getUserName());
-            userAndDepartmentVo.setWork_status(userVo.getWork_status());
+            userAndDepartmentVo.setWork_status(userVo.getWorkStatus());
             userAndDepartmentVo.setSex(userVo.getSex());
             userAndDepartmentVo.setDepartmentName(userVo.getDepartmentName());
             userAndDepartmentVo.setPostName(userVo.getPostName());
             userAndDepartmentVo.setRoleName(userVo.getRoleName());
             String departmentNameAndPostName = userAndDepartmentVo.getDepartmentName()+userAndDepartmentVo.getDepartmentName();
             userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
+            userAndDepartmentVo.setDepartmentId(userVo.getDepartmentId());
+            userAndDepartmentVo.setPostId(userVo.getPostId());
 
         }
         return userAndDepartmentVo;
@@ -142,7 +144,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
 
     @Override
     @CacheEvict(value = "DepartmentUserTree",allEntries = true)
-    @CachePut(value = "user", key = "updateUserDao.userId",unless="#result==null")
+    @CachePut(value = "user", key = "#updateUserDao.getUserId()",unless="#result==null")
     @Transactional
     public UserEnity updateUserById(UpdateUserDao updateUserDao, Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
@@ -150,13 +152,8 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
 
-        UserEnity userEnity;
+        UserEnity userEnity = selectByIdMy(updateUserDao.getUserId());
 
-        if (updateUserDao.getUserId() == null){
-            userEnity = selectByIdMy(userId);
-        }else {
-            userEnity = selectByIdMy(updateUserDao.getUserId());
-        }
         if (ObjectUtil.isNotNull(updateUserDao.getBirth())){
             userEnity.setBirth(updateUserDao.getBirth());
         }
@@ -195,6 +192,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
         userEnity.setUpdateTime(new Date());
         userEnity.setUpdateId(userId);
         if (update(userEnity,new LambdaUpdateWrapper<UserEnity>().eq(UserEnity::getUserId,userEnity.getUserId()))){
+            userEnity.setUserPassword(null);
             return userEnity;
         }
         return null;
@@ -212,14 +210,43 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
                 userAndDepartmentVo.setMobile(userVo.getMobile());
                 userAndDepartmentVo.setUserId(userVo.getUserId());
                 userAndDepartmentVo.setUserName(userVo.getUserName());
-                userAndDepartmentVo.setWork_status(userVo.getWork_status());
-                String departmentName = departmentService.getDepartmentName(userVo.getDepartmentId());
-                String postName = postMapper.selectPostName(userVo.getPostId());
+                userAndDepartmentVo.setWork_status(userVo.getWorkStatus());
+                String departmentName = userVo.getDepartmentName();
+                String postName = userVo.getPostName();
                 String departmentNameAndPostName = departmentName+postName;
                 userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
                 return userAndDepartmentVo;
             }).collect(Collectors.toList());
         }
         return userAndDepartmentVos;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#userId",condition = "#result != null"),
+            @CacheEvict(value = "DepartmentUserTree",key = "#departmentId",condition = "#result != null")
+    })
+    public ResultUtil deleteUser(Integer userId,Integer departmentId) {
+        UserEnity userEnity = selectByIdMy(userId);
+        userEnity.setStatus(0);
+        if (personUserMapper.update(userEnity,new LambdaUpdateWrapper<UserEnity>().eq(UserEnity::getUserId,userId))>0){
+            return ResultUtil.success("删除成功");
+        }
+        return null;
+    }
+
+    @Override
+    public Integer getLoginUserId(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+        return userId;
+    }
+
+    @Override
+    public Integer getUserDepartmentId(Integer userId) {
+        Integer departmentId = personUserMapper.getDepartmentIdByUser(userId);
+        return departmentId;
     }
 }

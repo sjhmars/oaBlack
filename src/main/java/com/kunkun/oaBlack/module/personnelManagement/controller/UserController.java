@@ -7,6 +7,7 @@ import com.kunkun.oaBlack.module.personnelManagement.dao.UpdateUserDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.UserDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.RoleEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
+import com.kunkun.oaBlack.module.personnelManagement.service.DepartmentService;
 import com.kunkun.oaBlack.module.personnelManagement.service.MyRoleService;
 import com.kunkun.oaBlack.module.personnelManagement.service.PersonUserService;
 import com.kunkun.oaBlack.module.personnelManagement.vo.UserAndDepartmentVo;
@@ -15,6 +16,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -52,14 +56,14 @@ public class UserController {
         return ResultUtil.success(roleEntityList);
     }
 
-    @ApiOperation("根据员工查询信息")
+    @ApiOperation("根据员工id查询信息")
     @PostMapping("/selectPeopleById")
     private ResultUtil selectPeopleById(@RequestBody UserDao userDao){
         UserAndDepartmentVo userAndDepartmentVo = personUserService.selectUserById(userDao.getUserId());
         return ResultUtil.success(userAndDepartmentVo);
     }
 
-    @ApiOperation("根据员工查询信息")
+    @ApiOperation("根据所有员工查询信息")
     @GetMapping("/selectAllPeople")
     private ResultUtil selectAllPeople(){
         List<UserAndDepartmentVo> userAndDepartmentVos = personUserService.selectAllPeople();
@@ -74,10 +78,26 @@ public class UserController {
             return ResultUtil.faile(errors);
         }
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+
+        if (updateUserDao.getUserId() == null){
+            Integer userId =  personUserService.getLoginUserId(authentication);
+            updateUserDao.setUserId(userId);
+        }
+
         UserEnity userEnity = personUserService.updateUserById(updateUserDao,authentication);
         if (ObjectUtil.isNotNull(userEnity)){
             return ResultUtil.success(userEnity);
         }
         return ResultUtil.faile("更新失败");
+    }
+
+    @ApiOperation("删除员工")
+    @PostMapping("/deleteUser")
+    public ResultUtil deleteUser(@RequestBody Integer userId){
+        Integer departmentId = personUserService.getUserDepartmentId(userId);
+        if (personUserService.deleteUser(userId,departmentId)!=null){
+            return ResultUtil.success("删除成功");
+        }
+        return ResultUtil.faile("删除失败");
     }
 }

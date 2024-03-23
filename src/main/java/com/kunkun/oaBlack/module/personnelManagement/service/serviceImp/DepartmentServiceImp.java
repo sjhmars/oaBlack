@@ -47,7 +47,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
     @Override
     @Transactional
-    @CacheEvict(value = "DepartmentUserTree",allEntries=true)
+//    @CacheEvict(value = "DepartmentUserTree",allEntries=true)
     public ResultUtil addDepartment(AddDepartmentDao departmentDao,Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();

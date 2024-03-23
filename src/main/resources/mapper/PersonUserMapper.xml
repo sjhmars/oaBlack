@@ -31,6 +31,13 @@
         where t_user.user_id = #{userId} and t_user.status = 1
     </select>
     <select id="selectAllUser" resultType="com.kunkun.oaBlack.module.personnelManagement.vo.UserVo">
-        select user_id,user_name,email,mobile,birth,work_status,department_id,post_id from t_user where t_user.status = 1
+        select t_user.user_id,user_name,email,mobile,work_status,t_user.department_id,t_user.post_id,department_name,post_name
+        from t_user
+        LEFT JOIN t_department ON t_department.department_id = t_user.department_id
+        LEFT JOIN t_post ON t_user.post_id = t_post.post_id
+        where t_user.user_id = #{userId} and t_user.status = 1
+    </select>
+	<select id="getDepartmentIdByUser" resultType="java.lang.Integer">
+        SELECT department_id FROM t_user WHERE user_id = #{userId}
     </select>
 </mapper>

@@ -42,7 +42,7 @@ public class WagesController {
         return ResultUtil.success(wagesService.getById(wagesDao.getWagesId()));
     }
 
-    @ApiOperation("查询自己的工资")
+    @ApiOperation("查询自己的工资记录")
     @PostMapping("/getMyWage")
     public ResultUtil getMyWage(@RequestBody PagesDao pagesDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();

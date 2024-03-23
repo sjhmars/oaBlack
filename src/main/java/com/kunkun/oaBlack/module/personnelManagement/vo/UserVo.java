@@ -21,7 +21,7 @@ public class UserVo {
 
     private Date birth;
 
-    private String work_status;
+    private Integer workStatus;
 
     private Integer departmentId;
 
