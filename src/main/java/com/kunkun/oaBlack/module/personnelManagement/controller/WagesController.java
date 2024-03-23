@@ -3,6 +3,7 @@ package com.kunkun.oaBlack.module.personnelManagement.controller;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
@@ -65,5 +66,16 @@ public class WagesController {
             return ResultUtil.success(wagesEntity);
         }
         return ResultUtil.faile("开工资失败");
+    }
+
+    @ApiOperation("一键生成本月工资")
+    @GetMapping("/giveWage")
+    public ResultUtil giveWage(){
+        try{
+            wagesService.giveWage();
+        }catch (BizException e){
+            return ResultUtil.faile(e);
+        }
+        return ResultUtil.success("一键生成成功");
     }
 }

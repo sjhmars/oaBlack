@@ -2,6 +2,7 @@ package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.TempWagesDao;
@@ -13,10 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -30,13 +29,14 @@ public class TempWageController {
 
     @ApiOperation("设置模版weage")
     @PostMapping("/setTempWage")
-    public ResultUtil setTempWage(TempWagesDao tempWagesDao){
+    public ResultUtil setTempWage(@RequestBody TempWagesDao tempWagesDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return ResultUtil.success(tempWagesService.setTempWages(authentication,tempWagesDao));
     }
 
     @ApiOperation("删除工资模版")
     @PostMapping("/deleteTempWage")
+    @Transactional
     public ResultUtil deleteTempWage(@RequestBody Integer tempWageId){
         TempWagesEntity tempWagesEntity = tempWagesService.getById(tempWageId);
         tempWagesEntity.setIsDelete(1);
@@ -68,13 +68,9 @@ public class TempWageController {
     }
 
     @ApiOperation("根据用户id查询工资模板")
-    @PostMapping("/selectAllTempWage")
-    public ResultUtil selectTempWageById(WagePageDao wagePageDao){
-        if (wagePageDao.getPageSize()==null){
-            wagePageDao.setPageSize(10);
-        }
-        Page<TempWagesEntity> tempWagesEntityPage = new Page<>(wagePageDao.getPageNumber(), wagePageDao.getPageSize());
-        return ResultUtil.success(tempWagesService.page(tempWagesEntityPage,new LambdaQueryWrapper<TempWagesEntity>()
-                .eq(TempWagesEntity::getIsDelete,0).eq(TempWagesEntity::getUserId,wagePageDao.getUserId())));
+    @PostMapping("/selectTempWageById")
+    public ResultUtil selectTempWageById(Integer userId){
+        return ResultUtil.success(tempWagesService.getOne(new LambdaQueryWrapper<TempWagesEntity>()
+                .eq(TempWagesEntity::getIsDelete,0).eq(TempWagesEntity::getUserId,userId)));
     }
 }

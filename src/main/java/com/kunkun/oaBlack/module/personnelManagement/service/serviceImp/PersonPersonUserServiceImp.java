@@ -58,6 +58,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
     @Cacheable(value = "user", key = "#userId")
     @Override
     public UserEnity selectByIdMy(Integer userId) {
+        System.out.println(userId);
         return personUserMapper.selectById(userId);
     }
 

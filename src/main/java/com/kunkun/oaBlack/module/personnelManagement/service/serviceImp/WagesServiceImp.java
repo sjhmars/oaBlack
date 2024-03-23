@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +47,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
     private TempWagesService tempWagesService;
 
     @Override
+    @Transactional
     public WagesEntity addWages(WagesDao wagesDao, Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -126,7 +128,8 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         return allWageVoIPage;
     }
 
-    @Scheduled(cron = "0 0 2 15 * *")
+    @Scheduled(cron = "0 0 10 15 * *")
+    @Transactional
     public void giveWage(){
         List<TempWagesEntity> tempWagesEntities = tempWagesService.list(new LambdaQueryWrapper<TempWagesEntity>().eq(TempWagesEntity::getIsDelete,0));
         if (CollectionUtils.isNotEmpty(tempWagesEntities)){

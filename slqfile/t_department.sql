@@ -11,7 +11,7 @@
  Target Server Version : 80022
  File Encoding         : 65001
 
- Date: 14/03/2024 04:34:29
+ Date: 23/03/2024 14:27:17
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `t_department`  (
   `user_id` int NULL DEFAULT NULL COMMENT '负责人',
   `head_user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '负责人姓名',
   PRIMARY KEY (`department_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_department
@@ -42,5 +42,7 @@ INSERT INTO `t_department` VALUES (4, '战略部', 1, 0, '2024-03-11 23:14:16', 
 INSERT INTO `t_department` VALUES (5, '战略部', 1, 0, '2024-03-11 23:14:42', NULL, 1, 'test');
 INSERT INTO `t_department` VALUES (6, '战略部', 5, 0, '2024-03-11 23:14:56', NULL, 1, 'test');
 INSERT INTO `t_department` VALUES (7, '战略市场', 6, 0, '2024-03-12 23:48:36', NULL, 1, 'test');
+INSERT INTO `t_department` VALUES (8, '技术部', 1, 0, '2024-03-19 07:39:18', NULL, 1, 'test2');
+INSERT INTO `t_department` VALUES (9, '数据平台部', 8, 0, '2024-03-19 07:47:35', NULL, 1, 'test2');
 
 SET FOREIGN_KEY_CHECKS = 1;

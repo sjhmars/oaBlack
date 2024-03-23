@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -31,6 +32,7 @@ public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesE
     private PersonUserService personUserService;
 
     @Override
+    @Transactional
     public TempWagesEntity setTempWages(Authentication authentication, TempWagesDao tempWagesDao) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
@@ -52,6 +54,7 @@ public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesE
     }
 
     @Override
+    @Transactional
     public TempWagesEntity updateAllById(Authentication authentication, TempWagesDao tempWagesDao) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();

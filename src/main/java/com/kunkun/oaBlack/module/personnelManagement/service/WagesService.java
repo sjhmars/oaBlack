@@ -18,4 +18,6 @@ public interface WagesService extends IService<WagesEntity> {
     IPage<MyWageVo> getMyWages(Authentication authentication, PagesDao pagesDao);
     IPage<WagesEntity> selectByName(WageNameDao wageNameDao);
     IPage<AllWageVo> selectAllWages(PagesDao pagesDao);
+    void giveWage();
+
 }
