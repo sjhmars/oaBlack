@@ -7,4 +7,5 @@ import org.springframework.security.core.Authentication;
 public interface CheckService extends IService<CheckEntity> {
     CheckEntity checkIn(Authentication authentication, String address);
     void balanceOneDay();
+    void doSomething();
 }

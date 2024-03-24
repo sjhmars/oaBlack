@@ -1,6 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
@@ -31,5 +32,16 @@ public class CheckController {
             return ResultUtil.faile("打卡失败");
         }
         return ResultUtil.success("打卡成功",checkEntity);
+    }
+
+    @ApiOperation("一键创建空的打卡记录")
+    @PostMapping("/createNullCheck")
+    public ResultUtil createNullCheck(){
+        try {
+            checkService.doSomething();
+        }catch (Exception e){
+            return ResultUtil.faile(e.getMessage());
+        }
+        return ResultUtil.success("生成成功");
     }
 }

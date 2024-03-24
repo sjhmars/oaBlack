@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
     @Scheduled(cron = "0 0 1 * * 1-5")
     public void doSomething() {
         //首先查询出所有的员工
-        List<UserEnity> userEnityList = personUserService.list();
+        List<UserEnity> userEnityList = personUserService.list(new LambdaQueryWrapper<UserEnity>().eq(UserEnity::getStatus,1));
 
         LocalDateTime thisDateZro = getThisDate();
 
