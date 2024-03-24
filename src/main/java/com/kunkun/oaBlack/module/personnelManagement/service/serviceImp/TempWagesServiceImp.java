@@ -75,7 +75,10 @@ public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesE
         }
         tempWagesEntity.setUpdateByUserId(userId);
         tempWagesEntity.setUpdateTime(new Date());
-        tempWagesMapper.update(tempWagesEntity,new LambdaUpdateWrapper<TempWagesEntity>().eq(TempWagesEntity::getTempWagesId,tempWagesDao.getTempWagesId()));
+        int rows = tempWagesMapper.update(tempWagesEntity,new LambdaUpdateWrapper<TempWagesEntity>().eq(TempWagesEntity::getTempWagesId,tempWagesDao.getTempWagesId()));
+        if (rows>0){
+            return tempWagesEntity;
+        }
         return null;
     }
 }

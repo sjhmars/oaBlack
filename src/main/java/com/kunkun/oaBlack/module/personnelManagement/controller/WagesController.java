@@ -1,6 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kunkun.oaBlack.common.util.BizException;
@@ -39,7 +40,10 @@ public class WagesController {
     @ApiOperation("根据ID查询工资条")
     @PostMapping("/getWageById")
     public ResultUtil getWageById(@RequestBody WagesDao wagesDao){
-        return ResultUtil.success(wagesService.getById(wagesDao.getWagesId()));
+        return ResultUtil.success(wagesService.getOne(new LambdaQueryWrapper<WagesEntity>()
+                .eq(WagesEntity::getUserId,wagesDao.getUserId())
+                .eq(WagesEntity::getIsDelete,0)
+        ));
     }
 
     @ApiOperation("查询自己的工资记录")

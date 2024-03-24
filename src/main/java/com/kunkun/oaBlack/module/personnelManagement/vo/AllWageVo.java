@@ -28,4 +28,6 @@ public class AllWageVo {
     private String departmentName;
 
     private String postName;
+
+    private Integer isDelete;
 }

@@ -38,12 +38,6 @@ public class CheckEntity {
     @TableField(value = "late_time")
     private String lateTime;
 
-    @TableField(value = "is_late")
-    private Integer isLate;
-
-    @TableField(value = "is_early")
-    private Integer isEarly;
-
     @TableField("early_time")
     private String earlyTime;
 

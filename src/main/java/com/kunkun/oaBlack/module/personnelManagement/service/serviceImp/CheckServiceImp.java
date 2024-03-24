@@ -2,6 +2,8 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
@@ -44,15 +46,17 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
 
         LocalDateTime thisDateZro = getThisDate();
 
-        userEnityList.forEach( userEnity ->{
-            Integer id = userEnity.getUserId();
-            //创建一个考勤实体
-            CheckEntity checkEntity = new CheckEntity();
-            //设置参数
-            checkEntity.setUserId(id);
-            checkEntity.setThisDate(thisDateZro);
-            checkEntity.setUserName(userEnity.getUserName());
-            //查询当前用户是否在请假中
+        List<CheckEntity> checkEntities = checkMapper.selectList(new LambdaQueryWrapper<CheckEntity>().eq(CheckEntity::getThisDate,thisDateZro));
+        if (CollectionUtils.isEmpty(checkEntities)){
+            userEnityList.forEach( userEnity ->{
+                Integer id = userEnity.getUserId();
+                //创建一个考勤实体
+                CheckEntity checkEntity = new CheckEntity();
+                //设置参数
+                checkEntity.setUserId(id);
+                checkEntity.setThisDate(thisDateZro);
+                checkEntity.setUserName(userEnity.getUserName());
+                //查询当前用户是否在请假中
 //            Leaves leaves = leavesService.queryIsLeaves(id, LocalDateTime.now());
 //            if (ObjectUtil.isNotEmpty(leaves)){
 //                attendanceRecords.setLeaveStatus(leaves.getLeaveType());
@@ -61,8 +65,9 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
 //            }
 //            //进行保存
 //            add(attendanceRecords);
-            checkMapper.insert(checkEntity);
-        });
+                checkMapper.insert(checkEntity);
+            });
+        }
     }
 
 
@@ -94,6 +99,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             newCheck.setAddress(address);
             newCheck.setUserName(userEnity.getUserName());
             if (comparisonResult<0){
+                //计算迟到(只算第一次卡)
                 newCheck.setCheckStartTime(checkTime);
                 long timestampInMillis = checkTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
@@ -105,9 +111,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
                 newCheck.setCheckEndTime(checkTime);
                 long timestampInMillis = checkTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 String earlyTime = checkEarly(timestampInMillis);
-                if (earlyTime!=null){
-                    newCheck.setEarlyTime(earlyTime);
-                }
+                newCheck.setEarlyTime(earlyTime);
             }
             if (checkMapper.insert(newCheck)>0){
                 return newCheck;
@@ -117,23 +121,26 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             check.setAddress(address);
             check.setUserName(userEnity.getUserName());
             if (comparisonResult<0){
-                check.setCheckStartTime(checkTime);
-                //计算迟到
-                long timestampInMillis = checkTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                String lateTime = checklast(timestampInMillis);
-                if (lateTime!=null){
-                    check.setLateTime(lateTime);
+                //计算迟到(只算第一次卡)
+                if (check.getCheckStartTime() == null){
+                    check.setCheckStartTime(checkTime);
+                    //计算迟到
+                    long timestampInMillis = checkTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                    String lateTime = checklast(timestampInMillis);
+                    if (lateTime!=null)
+                        check.setLateTime(lateTime);
                 }
             }else {
                 check.setCheckEndTime(checkTime);
                 //计算早退
                 long timestampInMillis = checkTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 String earlyTime = checkEarly(timestampInMillis);
-                if (earlyTime!=null){
-                    check.setEarlyTime(earlyTime);
-                }
+                check.setEarlyTime(earlyTime);
             }
-            if (checkMapper.updateById(check)>0){
+            int rows = checkMapper.update(check, new LambdaUpdateWrapper<CheckEntity>()
+                    .set(CheckEntity::getEarlyTime,check.getEarlyTime())
+                    .eq(CheckEntity::getCheckId,check.getCheckId()));
+            if (rows>0){
                 return check;
             }
         }
@@ -165,7 +172,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
 
     public String checkEarly(long timestampInMillis){
 
-        LocalDateTime halfSix = LocalDateTime.now().with(LocalTime.of(6, 30));
+        LocalDateTime halfSix = LocalDateTime.now().with(LocalTime.of(18, 30));
         long HalfSixInMillis = halfSix.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         String earlyTime;
         if (timestampInMillis<HalfSixInMillis){

@@ -11,7 +11,8 @@
 	        t_wages.user_name,
 	        REPLACE ( UNIX_TIMESTAMP( t_wages.create_time)*1000, '.', '' ) as create_time,
 	        t_department.department_name,
-	        t_post.post_name
+	        t_post.post_name,
+	        t_wages.is_delete
         FROM
 	        t_wages
 	    LEFT JOIN t_user ON t_wages.user_id = t_user.user_id
