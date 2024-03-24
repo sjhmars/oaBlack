@@ -11,7 +11,7 @@
  Target Server Version : 80022
  File Encoding         : 65001
 
- Date: 24/03/2024 14:03:20
+ Date: 24/03/2024 23:17:34
 */
 
 SET NAMES utf8mb4;
@@ -29,17 +29,15 @@ CREATE TABLE `t_check`  (
   `check_start_time` datetime NULL DEFAULT NULL COMMENT '第一次打卡时间',
   `check_end_time` datetime NULL DEFAULT NULL COMMENT '最后一次打卡时间',
   `late_time` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '迟到时间',
-  `is_late` int NULL DEFAULT NULL COMMENT '是否迟到',
-  `is_early` int NULL DEFAULT NULL COMMENT '是否早退',
   `early_time` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '早退时间',
   `leave_status` int NULL DEFAULT NULL COMMENT '上班状态',
   `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '打卡地点',
   PRIMARY KEY (`check_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_check
 -- ----------------------------
-INSERT INTO `t_check` VALUES (2, 1, 'test', '2024-03-24 00:00:00', '2024-03-24 05:21:28', NULL, NULL, NULL, NULL, NULL, NULL, '哈哈哈哈哈哈');
+INSERT INTO `t_check` VALUES (2, 1, 'test', '2024-03-24 00:00:00', '2024-03-24 05:21:28', '2024-03-24 23:16:36', NULL, NULL, NULL, '哈哈哈哈哈哈');
 
 SET FOREIGN_KEY_CHECKS = 1;
