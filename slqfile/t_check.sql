@@ -11,7 +11,7 @@
  Target Server Version : 80022
  File Encoding         : 65001
 
- Date: 23/03/2024 14:27:09
+ Date: 24/03/2024 14:03:20
 */
 
 SET NAMES utf8mb4;
@@ -33,11 +33,13 @@ CREATE TABLE `t_check`  (
   `is_early` int NULL DEFAULT NULL COMMENT '是否早退',
   `early_time` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '早退时间',
   `leave_status` int NULL DEFAULT NULL COMMENT '上班状态',
+  `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '打卡地点',
   PRIMARY KEY (`check_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_check
 -- ----------------------------
+INSERT INTO `t_check` VALUES (2, 1, 'test', '2024-03-24 00:00:00', '2024-03-24 05:21:28', NULL, NULL, NULL, NULL, NULL, NULL, '哈哈哈哈哈哈');
 
 SET FOREIGN_KEY_CHECKS = 1;

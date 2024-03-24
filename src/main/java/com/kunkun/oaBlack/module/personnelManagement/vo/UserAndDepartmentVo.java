@@ -35,5 +35,5 @@ public class UserAndDepartmentVo {
 
     private String postName;
 
-    private String roleName;
+    private Integer roleId;
 }

@@ -33,5 +33,5 @@ public class UserVo {
 
     private String postName;
 
-    private String roleName;
+    private Integer roleId;
 }

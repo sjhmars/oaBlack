@@ -126,7 +126,7 @@ public class PersonPersonUserServiceImp extends ServiceImpl<PersonUserMapper, Us
             userAndDepartmentVo.setSex(userVo.getSex());
             userAndDepartmentVo.setDepartmentName(userVo.getDepartmentName());
             userAndDepartmentVo.setPostName(userVo.getPostName());
-            userAndDepartmentVo.setRoleName(userVo.getRoleName());
+            userAndDepartmentVo.setRoleId(userVo.getRoleId());
             String departmentNameAndPostName = userAndDepartmentVo.getDepartmentName()+userAndDepartmentVo.getDepartmentName();
             userAndDepartmentVo.setDepartmentAndPost(departmentNameAndPostName);
             userAndDepartmentVo.setDepartmentId(userVo.getDepartmentId());
