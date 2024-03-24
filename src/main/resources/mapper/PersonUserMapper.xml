@@ -35,7 +35,7 @@
         from t_user
         LEFT JOIN t_department ON t_department.department_id = t_user.department_id
         LEFT JOIN t_post ON t_user.post_id = t_post.post_id
-        where t_user.user_id = #{userId} and t_user.status = 1
+        where t_user.status = 1
     </select>
 	<select id="getDepartmentIdByUser" resultType="java.lang.Integer">
         SELECT department_id FROM t_user WHERE user_id = #{userId}
