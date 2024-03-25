@@ -48,6 +48,7 @@ public class TempWagesServiceImp extends ServiceImpl<TempWagesMapper, TempWagesE
         tempWagesEntity.setUserId(tempWagesDao.getUserId());
         UserEnity userEnity = personUserService.selectByIdMy(tempWagesDao.getUserId());
         tempWagesEntity.setUserName(userEnity.getUserName());
+        tempWagesEntity.setUpdateTime(new Date());
 
         tempWagesMapper.insert(tempWagesEntity);
         return tempWagesEntity;
