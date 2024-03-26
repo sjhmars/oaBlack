@@ -82,7 +82,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
         Page<WagesEntity> page = new Page<>(pagesDao.getPageNumber(),pagesDao.getPageSize());
         Page<WagesEntity> wagesEntityPage = wagesMapper.selectPage(page,new LambdaQueryWrapper<WagesEntity>().eq(WagesEntity::getUserId,userId));
         List<WagesEntity> wagesEntities = wagesEntityPage.getRecords();
-        List<MyWageVo> wageVos = new ArrayList<>();
+        List<MyWageVo> wageVos;
         if (CollectionUtils.isNotEmpty(wagesEntities)){
             wageVos = wagesEntities.stream().map(wagesEntity -> {
                 MyWageVo wageVo = new MyWageVo();
@@ -95,6 +95,7 @@ public class WagesServiceImp extends ServiceImpl<WagesMapper, WagesEntity> imple
                 wageVo.setUserName(wagesEntity.getUserName());
                 wageVo.setWagesId(wagesEntity.getWagesId());
                 wageVo.setTotal(wagesEntity.getBasicSalary()+wagesEntity.getMealSupplement()+wagesEntity.getPerformance());
+                wageVo.setIsDelete(wagesEntity.getIsDelete());
                 return wageVo;
             }).collect(Collectors.toList());
             IPage<MyWageVo> myWageVoIPage = new Page<>();

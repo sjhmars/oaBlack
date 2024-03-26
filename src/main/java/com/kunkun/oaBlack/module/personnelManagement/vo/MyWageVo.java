@@ -31,4 +31,6 @@ public class MyWageVo {
     private Integer loseMoney;
 
     private Integer total;
+
+    private Integer isDelete;
 }

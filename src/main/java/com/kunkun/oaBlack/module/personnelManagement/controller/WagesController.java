@@ -8,6 +8,7 @@ import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.PagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WageNameDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.WagePageDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.WagesDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.WagesEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.WagesService;
@@ -39,9 +40,12 @@ public class WagesController {
 
     @ApiOperation("根据ID查询工资条")
     @PostMapping("/getWageById")
-    public ResultUtil getWageById(@RequestBody WagesDao wagesDao){
-        return ResultUtil.success(wagesService.list(new LambdaQueryWrapper<WagesEntity>()
-                .eq(WagesEntity::getUserId,wagesDao.getUserId())
+    public ResultUtil getWageById(@RequestBody WagePageDao wagePageDao){
+        if (wagePageDao.getPageSize() == null)
+            wagePageDao.setPageSize(10);
+        Page<WagesEntity> wagesEntityPage = new Page<>(wagePageDao.getPageNumber(),wagePageDao.getPageSize());
+        return ResultUtil.success(wagesService.page(wagesEntityPage,new LambdaQueryWrapper<WagesEntity>()
+                .eq(WagesEntity::getUserId,wagePageDao.getUserId())
                 .eq(WagesEntity::getIsDelete,0)
         ));
     }
