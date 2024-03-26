@@ -40,7 +40,7 @@ public class WagesController {
     @ApiOperation("根据ID查询工资条")
     @PostMapping("/getWageById")
     public ResultUtil getWageById(@RequestBody WagesDao wagesDao){
-        return ResultUtil.success(wagesService.getOne(new LambdaQueryWrapper<WagesEntity>()
+        return ResultUtil.success(wagesService.list(new LambdaQueryWrapper<WagesEntity>()
                 .eq(WagesEntity::getUserId,wagesDao.getUserId())
                 .eq(WagesEntity::getIsDelete,0)
         ));
