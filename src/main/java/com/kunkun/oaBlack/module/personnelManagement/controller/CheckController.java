@@ -46,8 +46,8 @@ public class CheckController {
     }
 
     @ApiOperation("查询所有打卡记录")
-    @PostMapping("/seleteAllCheck")
-    public ResultUtil seleteAllCheck(@RequestBody CheckDao checkDao){
+    @PostMapping("/selectAllCheck")
+    public ResultUtil selectAllCheck(@RequestBody CheckDao checkDao){
         IPage<CheckEntity> checkEntityPage = checkService.seleAllCheck(checkDao);
         if (checkEntityPage!=null){
             return ResultUtil.success("成功请求",checkEntityPage);

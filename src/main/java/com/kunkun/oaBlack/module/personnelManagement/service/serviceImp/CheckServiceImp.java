@@ -22,10 +22,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 
@@ -83,9 +80,11 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>());
         }
         if (checkDao.getStartTime()!=null && checkDao.getEndTime()!=null){
+            LocalDateTime startTime = LocalDateTime.ofEpochSecond(checkDao.getStartTime(), 0, ZoneOffset.ofHours(8));
+            LocalDateTime endTime = LocalDateTime.ofEpochSecond(checkDao.getEndTime(), 0, ZoneOffset.ofHours(8));
             checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>()
-                    .ge(CheckEntity::getThisDate,checkDao.getStartTime())
-                    .le(CheckEntity::getThisDate,checkDao.getEndTime())
+                    .ge(CheckEntity::getThisDate,startTime)
+                    .le(CheckEntity::getThisDate,endTime)
             );
         }
         return checkEntityIPage;

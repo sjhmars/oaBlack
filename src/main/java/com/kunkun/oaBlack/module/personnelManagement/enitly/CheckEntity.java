@@ -1,9 +1,11 @@
 package com.kunkun.oaBlack.module.personnelManagement.enitly;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.kunkun.oaBlack.common.util.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,12 +29,15 @@ public class CheckEntity {
     private String userName;
 
     @TableField(value = "this_date")
+    @JSONField(serializeUsing = LocalDateTimeSerializer.class)
     private LocalDateTime thisDate;
 
     @TableField(value = "check_start_time")
+    @JSONField(serializeUsing = LocalDateTimeSerializer.class)
     private LocalDateTime checkStartTime;
 
     @TableField(value = "check_end_time")
+    @JSONField(serializeUsing = LocalDateTimeSerializer.class)
     private LocalDateTime checkEndTime;
 
     @TableField(value = "late_time")

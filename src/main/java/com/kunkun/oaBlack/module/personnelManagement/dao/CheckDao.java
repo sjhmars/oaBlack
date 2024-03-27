@@ -1,5 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.dao;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.kunkun.oaBlack.common.util.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,11 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CheckDao {
 
-    private Integer PageNumber;
+    private Integer pageNumber;
 
-    private Integer PageSize;
+    private Integer pageSize;
 
-    private LocalDateTime startTime;
+    private Long startTime;
 
-    private LocalDateTime endTime;
+    private Long endTime;
 }
