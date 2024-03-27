@@ -80,8 +80,8 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>());
         }
         if (checkDao.getStartTime()!=null && checkDao.getEndTime()!=null){
-            LocalDateTime startTime = LocalDateTime.ofEpochSecond(checkDao.getStartTime(), 0, ZoneOffset.ofHours(8));
-            LocalDateTime endTime = LocalDateTime.ofEpochSecond(checkDao.getEndTime(), 0, ZoneOffset.ofHours(8));
+            LocalDateTime startTime = Instant.ofEpochMilli(checkDao.getStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
+            LocalDateTime endTime = Instant.ofEpochMilli(checkDao.getEndTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
             checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>()
                     .ge(CheckEntity::getThisDate,startTime)
                     .le(CheckEntity::getThisDate,endTime)
