@@ -1,8 +1,11 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
+import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
 import io.swagger.annotations.Api;
@@ -40,5 +43,15 @@ public class CheckController {
             return ResultUtil.faile(e.getMessage());
         }
         return ResultUtil.success("生成成功");
+    }
+
+    @ApiOperation("查询所有打卡记录")
+    @PostMapping("/seleteAllCheck")
+    public ResultUtil seleteAllCheck(@RequestBody CheckDao checkDao){
+        IPage<CheckEntity> checkEntityPage = checkService.seleAllCheck(checkDao);
+        if (checkEntityPage!=null){
+            return ResultUtil.success("成功请求",checkEntityPage);
+        }
+        return ResultUtil.faile("失败了宝贝");
     }
 }

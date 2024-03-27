@@ -3,8 +3,11 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.CheckMapper;
@@ -67,6 +70,25 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
                 checkMapper.insert(checkEntity);
             });
         }
+    }
+
+    @Override
+    public IPage<CheckEntity> seleAllCheck(CheckDao checkDao) {
+        if (checkDao.getPageSize() == null){
+            checkDao.setPageSize(10);
+        }
+        Page<CheckEntity> checkEntityPage = new Page<>(checkDao.getPageNumber(),checkDao.getPageSize());
+        IPage<CheckEntity> checkEntityIPage = null;
+        if (checkDao.getStartTime()==null&&checkDao.getEndTime()==null){
+            checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>());
+        }
+        if (checkDao.getStartTime()!=null && checkDao.getEndTime()!=null){
+            checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>()
+                    .ge(CheckEntity::getThisDate,checkDao.getStartTime())
+                    .le(CheckEntity::getThisDate,checkDao.getEndTime())
+            );
+        }
+        return checkEntityIPage;
     }
 
 
