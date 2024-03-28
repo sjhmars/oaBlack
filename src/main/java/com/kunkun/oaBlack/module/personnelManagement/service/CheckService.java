@@ -12,4 +12,5 @@ public interface CheckService extends IService<CheckEntity> {
     void balanceOneDay();
     void doSomething();
     IPage<CheckEntity> seleAllCheck(CheckDao checkDao);
+    IPage<CheckEntity> selectMyCheck(CheckDao checkDao,Authentication authentication);
 }

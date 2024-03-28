@@ -54,4 +54,16 @@ public class CheckController {
         }
         return ResultUtil.faile("失败了宝贝");
     }
+
+
+    @ApiOperation("查询我自己的打卡记录")
+    @PostMapping("/getMyCheck")
+    public ResultUtil getMyCheck(@RequestBody CheckDao checkDao){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        IPage<CheckEntity> checkEntityPage = checkService.selectMyCheck(checkDao,authentication);
+        if (checkEntityPage!=null){
+            return ResultUtil.success("成功请求",checkEntityPage);
+        }
+        return ResultUtil.faile("失败了宝贝");
+    }
 }

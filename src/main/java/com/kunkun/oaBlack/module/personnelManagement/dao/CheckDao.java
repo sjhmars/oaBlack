@@ -16,4 +16,5 @@ public class CheckDao {
     private Long startTime;
 
     private Long endTime;
+
 }

@@ -90,6 +90,32 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
         return checkEntityIPage;
     }
 
+    @Override
+    public IPage<CheckEntity> selectMyCheck(CheckDao checkDao,Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+        if (checkDao.getPageSize() == null){
+            checkDao.setPageSize(10);
+        }
+        Page<CheckEntity> checkEntityPage = new Page<>(checkDao.getPageNumber(),checkDao.getPageSize());
+        IPage<CheckEntity> checkEntityIPage = null;
+        if (checkDao.getStartTime()==null&&checkDao.getEndTime()==null){
+            checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>().eq(CheckEntity::getUserId,userId));
+        }
+        if (checkDao.getStartTime()!=null && checkDao.getEndTime()!=null){
+            LocalDateTime startTime = Instant.ofEpochMilli(checkDao.getStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
+            LocalDateTime endTime = Instant.ofEpochMilli(checkDao.getEndTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
+            checkEntityIPage = checkMapper.selectPage(checkEntityPage,new LambdaQueryWrapper<CheckEntity>()
+                    .ge(CheckEntity::getThisDate,startTime)
+                    .le(CheckEntity::getThisDate,endTime)
+                    .eq(CheckEntity::getUserId,userId)
+            );
+        }
+        return checkEntityIPage;
+    }
+
 
     @Override
     @Transactional
