@@ -1,7 +1,7 @@
 package com.kunkun.oaBlack.module.personnelManagement.emum;
 
 public enum check_status {
-    Holiday(0,"放假"),
+    Holiday(0,"处于假期"),
     Absenteeism(1,"旷工"),
     Early_departure(2,"早退"),
     Late(3,"迟到");
