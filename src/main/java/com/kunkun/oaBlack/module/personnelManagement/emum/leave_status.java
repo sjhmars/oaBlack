@@ -25,7 +25,7 @@ public enum leave_status {
     public static String getValue(Integer leaveStatusNum){
         for (leave_status anEnum : leave_status.values()) {
             if (leaveStatusNum.equals(anEnum.leaveStatusNum)){
-                return leave_status.getValue(leaveStatusNum);
+                return anEnum.leaveStatusName;
             }
         }
         return null;
