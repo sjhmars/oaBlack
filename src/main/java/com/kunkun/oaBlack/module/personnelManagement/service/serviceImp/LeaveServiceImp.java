@@ -34,6 +34,7 @@ public class LeaveServiceImp extends ServiceImpl<LeaveMapper, LeaveEntity> imple
         OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
         UserEnity userEnity = personUserService.selectByIdMy(userId);
+        UserEnity ruserEnity = personUserService.selectByIdMy(leaveDao.getReviewerUserId());
 
 
         LeaveEntity leaveEntity = new LeaveEntity();
@@ -42,6 +43,10 @@ public class LeaveServiceImp extends ServiceImpl<LeaveMapper, LeaveEntity> imple
         leaveEntity.setCreateUserId(userId);
         leaveEntity.setCreateUserName(userEnity.getUserName());
         leaveEntity.setLeaveType(leaveDao.getLeaveType());
+        leaveEntity.setLeaveDetails(leaveDao.getLeaveDetails());
+        leaveEntity.setReviewerUserId(leaveDao.getReviewerUserId());
+        leaveEntity.setReviewerUserName(ruserEnity.getUserName());
+
 
         NoticeEntity noticeEntity = new NoticeEntity();
 
