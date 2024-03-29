@@ -11,7 +11,6 @@ public class LeaveDao {
     private long beginTime;
     private long endTime;
     private Integer reviewerUserId;
-    private Integer createUserId;
     private Integer leaveType;
     private String leaveDetails;
 }

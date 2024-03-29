@@ -50,4 +50,5 @@ public class LeaveEntity {
 
     @TableField("leave_details")
     private String leaveDetails;
+
 }
