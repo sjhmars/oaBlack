@@ -72,7 +72,7 @@ public class LeaveServiceImp extends ServiceImpl<LeaveMapper, LeaveEntity> imple
 
         int leaveRow = leaveMapper.insert(leaveEntity);
         if(leaveRow>0){
-            logger.info("添加假条成功");
+            logger.info("发起请假成功");
         }
 
         NoticeEntity noticeEntity = new NoticeEntity();

@@ -9,13 +9,18 @@ import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.NoticeMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.LeaveService;
 import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
 @Service
 public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> implements NoticeService {
+
+    protected static final Logger logger = LoggerFactory.getLogger(NoticeServiceImp.class);
 
     @Autowired
     private NoticeMapper noticeMapper;
@@ -24,6 +29,7 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
     private LeaveService leaveService;
 
     @Override
+    @Transactional
     public NoticeEntity agree(Integer noticeId,String noticeContent) {
         NoticeEntity noticeEntity = noticeMapper.selectById(noticeId);
         Date thisDate = new Date();
@@ -39,17 +45,24 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
                 return noticeEntity;
         }
         if (thisDate.getTime()<noticeEntity.getEndTime().getTime()){
-            noticeEntity.setOperationStatus(statusEmum.SUCCESS.getStatusCode());
-            noticeEntity.setNoticeContent(noticeContent);
             if (noticeEntity.getNoticeType().equals(NoticeType.holidayReview.getTypeCode())){
                 LeaveEntity leaveEntity = leaveService.getById(noticeEntity.getEntityId());
-
+                leaveEntity.setStatus(statusEmum.SUCCESS.getStatusCode());
+                if (leaveService.update(leaveEntity,new LambdaUpdateWrapper<LeaveEntity>().eq(LeaveEntity::getLeaveId,leaveEntity.getLeaveId()))){
+                    logger.info("请假成功");
+                }
+                else {
+                    return null;
+                }
             }
+            noticeEntity.setOperationStatus(statusEmum.SUCCESS.getStatusCode());
+            noticeEntity.setNoticeContent(noticeContent);
             row = noticeMapper.update(noticeEntity,new LambdaUpdateWrapper<NoticeEntity>()
                     .eq(NoticeEntity::getNoticeId,noticeId)
                     .eq(NoticeEntity::getIsDelete,0)
             );
             if (row>0)
+                logger.info("审批通过成功");
                 return noticeEntity;
         }
         return null;
