@@ -1,5 +1,6 @@
 package com.kunkun.oaBlack.module.personnelManagement.enitly;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -15,7 +16,7 @@ import java.util.Date;
 @TableName("t_leave")
 public class LeaveEntity {
 
-    @TableId("leave_id")
+    @TableId(value = "leave_id",type = IdType.AUTO)
     private Integer leaveId;
 
     @TableField("begin_time")

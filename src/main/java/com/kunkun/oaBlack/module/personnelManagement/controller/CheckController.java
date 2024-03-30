@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/check")
-@Api("打卡模块")
+@Api(tags = "打卡模块")
 public class CheckController {
 
     @Autowired
