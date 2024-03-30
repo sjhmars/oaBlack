@@ -1,23 +1,44 @@
--- --------------------------------------------------------
--- 主机:                           127.0.0.1
--- 服务器版本:                        8.0.36 - MySQL Community Server - GPL
--- 服务器操作系统:                      Win64
--- HeidiSQL 版本:                  12.6.0.6765
--- --------------------------------------------------------
+/*
+ Navicat Premium Data Transfer
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+ Source Server         : text1
+ Source Server Type    : MySQL
+ Source Server Version : 80022
+ Source Host           : localhost:3306
+ Source Schema         : office_oa
 
--- 数据导出被取消选择。
+ Target Server Type    : MySQL
+ Target Server Version : 80022
+ File Encoding         : 65001
 
-/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+ Date: 30/03/2024 15:35:39
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for t_notice
+-- ----------------------------
+DROP TABLE IF EXISTS `t_notice`;
+CREATE TABLE `t_notice`  (
+  `notice_id` int NOT NULL AUTO_INCREMENT COMMENT '消息id',
+  `notice_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '通知内容',
+  `notice_title` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '通知标题',
+  `notice_type` int NULL DEFAULT NULL COMMENT '通知类型',
+  `send_user_id` int NULL DEFAULT NULL COMMENT '发送人',
+  `recipient_user_id` int NULL DEFAULT NULL COMMENT '接收人',
+  `status` int NULL DEFAULT NULL COMMENT '消息状态',
+  `is_delete` int NULL DEFAULT NULL COMMENT '是否删除',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `operation_status` int NULL DEFAULT NULL COMMENT '操作状态',
+  `entity_id` int NULL DEFAULT NULL COMMENT '代办类id',
+  `end_time` datetime NULL DEFAULT NULL COMMENT '代办结束时间',
+  PRIMARY KEY (`notice_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_notice
+-- ----------------------------
+
+SET FOREIGN_KEY_CHECKS = 1;
