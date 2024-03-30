@@ -47,4 +47,7 @@ public class NoticeEntity {
 
     @TableField(value = "entity_id")
     private Integer entityId;
+
+    @TableField("end_time")
+    private Date endTime;
 }

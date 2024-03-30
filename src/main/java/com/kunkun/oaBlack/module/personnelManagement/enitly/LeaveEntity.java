@@ -25,7 +25,7 @@ public class LeaveEntity {
     private Date endTime;
 
     @TableField("day")
-    private Integer day;
+    private float day;
 
     @TableField("reviewer_user_id")
     private Integer reviewerUserId;
