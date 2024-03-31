@@ -76,7 +76,7 @@ public class LeaveServiceImp extends ServiceImpl<LeaveMapper, LeaveEntity> imple
         }
 
         NoticeEntity noticeEntity = new NoticeEntity();
-        noticeEntity.setNoticeTitle("假期审核");
+        noticeEntity.setNoticeTitle(NoticeType.holidayReview.getTypeName());
         noticeEntity.setCreateTime(new Date());
         noticeEntity.setNoticeType(NoticeType.holidayReview.getTypeCode());
         noticeEntity.setSendUserId(userId);

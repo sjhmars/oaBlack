@@ -4,7 +4,8 @@ public enum check_status {
     Holiday(0,"处于假期"),
     Absenteeism(1,"旷工"),
     Early_departure(2,"早退"),
-    Late(3,"迟到");
+    Late(3,"迟到"),
+    LateAndEarly(5,"迟到加早退");
 
 
     private final Integer statusNum;

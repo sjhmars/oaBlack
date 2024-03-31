@@ -55,6 +55,15 @@ public class CheckController {
         return ResultUtil.faile("失败了宝贝");
     }
 
+    @ApiOperation("根据Id查询打卡记录")
+    @PostMapping("/selectCheckById")
+    public ResultUtil selectCheckById(@RequestBody CheckDao checkDao){
+        IPage<CheckEntity> checkEntityPage = checkService.seleCheckById(checkDao);
+        if (checkEntityPage!=null){
+            return ResultUtil.success("成功请求",checkEntityPage);
+        }
+        return ResultUtil.faile("失败了宝贝");
+    }
 
     @ApiOperation("查询我自己的打卡记录")
     @PostMapping("/getMyCheck")
@@ -65,5 +74,16 @@ public class CheckController {
             return ResultUtil.success("成功请求",checkEntityPage);
         }
         return ResultUtil.faile("失败了宝贝");
+    }
+
+    @ApiOperation("一键结算")
+    @GetMapping("/balance")
+    public ResultUtil balance(){
+        try {
+            checkService.balanceOneDay();
+        }catch (BizException e){
+            return ResultUtil.faile(e.getErrorMsg());
+        }
+        return ResultUtil.success("结算成功");
     }
 }

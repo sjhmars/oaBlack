@@ -42,12 +42,15 @@ public class CheckEntity {
     @TableField(value = "late_time")
     private String lateTime;
 
-    @TableField("early_time")
+    @TableField(value ="early_time")
     private String earlyTime;
 
-    @TableField("leave_status")
+    @TableField(value ="leave_status")
     private Integer leaveStatus;
 
-    @TableField("address")
+    @TableField(value ="address")
     private String address;
+
+    @TableField(value ="other_status")
+    private Integer otherStatus;
 }

@@ -17,4 +17,5 @@ public class CheckDao {
 
     private Long endTime;
 
+    private Integer userId;
 }
