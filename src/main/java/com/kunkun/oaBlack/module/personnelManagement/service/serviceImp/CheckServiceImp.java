@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.MakeUpCheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.emum.check_status;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
@@ -148,6 +149,51 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             );
         }
         return checkEntityIPage;
+    }
+
+    @Override
+    public CheckEntity makeUpCheckIn(Authentication authentication, MakeUpCheckDao makeUpCheckDao) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+        UserEnity userEnity = personUserService.selectByIdMy(userId);
+
+        CheckEntity checkEntity = checkMapper.selectById(makeUpCheckDao.getCheckId());
+        if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckStartTime())){
+            checkEntity.setCheckStartTime(makeUpCheckDao.getCheckStartTime());
+            checkEntity.setLateTime(null);
+        }
+        if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckEndTime())){
+            checkEntity.setCheckStartTime(makeUpCheckDao.getCheckEndTime());
+            checkEntity.setEarlyTime(null);
+        }
+        if (checkEntity.getLeaveStatus()!=check_status.Holiday.getStatusNum()){
+            if (checkEntity.getLateTime()!=null&&checkEntity.getEarlyTime()!=null){
+                checkEntity.setLeaveStatus(check_status.LateAndEarly.getStatusNum());
+            }else if (checkEntity.getLateTime()!=null){
+                checkEntity.setLeaveStatus(check_status.Late.getStatusNum());
+            }else if (checkEntity.getEarlyTime()!=null){
+                checkEntity.setLeaveStatus(check_status.Early_departure.getStatusNum());
+            }else {
+                checkEntity.setLeaveStatus(check_status.normal.getStatusNum());
+            }
+        }else {
+            if (checkEntity.getLateTime()!=null&&checkEntity.getEarlyTime()!=null){
+                checkEntity.setOtherStatus(check_status.LateAndEarly.getStatusNum());
+            }else if (checkEntity.getLateTime()!=null){
+                checkEntity.setOtherStatus(check_status.Late.getStatusNum());
+            }else if (checkEntity.getEarlyTime()!=null){
+                checkEntity.setOtherStatus(check_status.Early_departure.getStatusNum());
+            }else {
+                checkEntity.setOtherStatus(check_status.normal.getStatusNum());
+            }
+        }
+        int row = checkMapper.updateById(checkEntity);
+        if (row>0){
+            return checkEntity;
+        }
+        return null;
     }
 
 
