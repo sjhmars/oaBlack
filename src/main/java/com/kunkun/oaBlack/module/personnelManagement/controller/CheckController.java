@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kunkun.oaBlack.common.util.BizException;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.MakeUpCheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
 import io.swagger.annotations.Api;
@@ -85,5 +86,15 @@ public class CheckController {
             return ResultUtil.faile(e.getErrorMsg());
         }
         return ResultUtil.success("结算成功");
+    }
+
+    @ApiOperation("补卡")
+    @GetMapping("/makeUpCheck")
+    public ResultUtil makeUpCheck(@RequestBody MakeUpCheckDao makeUpCheckDao){
+        CheckEntity checkEntity = checkService.makeUpCheckIn(makeUpCheckDao);
+        if (ObjectUtil.isNotNull(checkEntity)){
+            return ResultUtil.success("你成功啦",checkEntity);
+        }
+        return ResultUtil.faile("失败了");
     }
 }

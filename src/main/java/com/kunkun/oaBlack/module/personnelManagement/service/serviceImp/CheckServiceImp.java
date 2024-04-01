@@ -153,23 +153,23 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
     }
 
     @Override
-    public CheckEntity makeUpCheckIn(Authentication authentication, MakeUpCheckDao makeUpCheckDao) {
-        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
-        String tokenValue = details.getTokenValue();
-        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
-        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
-        UserEnity userEnity = personUserService.selectByIdMy(userId);
+    @Transactional
+    public CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao) {
+
+        LocalDateTime startTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
+        LocalDateTime endTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckEndTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
 
         CheckEntity checkEntity = checkMapper.selectById(makeUpCheckDao.getCheckId());
         if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckStartTime())){
-            checkEntity.setCheckStartTime(makeUpCheckDao.getCheckStartTime());
+            checkEntity.setCheckStartTime(startTime);
             checkEntity.setLateTime(null);
         }
         if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckEndTime())){
-            checkEntity.setCheckStartTime(makeUpCheckDao.getCheckEndTime());
+            checkEntity.setCheckStartTime(endTime);
             checkEntity.setEarlyTime(null);
         }
         if (!Objects.equals(checkEntity.getLeaveStatus(), check_status.Holiday.getStatusNum())){
+            logger.info("判断补卡后是否还是迟到");
             if (checkEntity.getLateTime()!=null&&checkEntity.getEarlyTime()!=null){
                 checkEntity.setLeaveStatus(check_status.LateAndEarly.getStatusNum());
             }else if (checkEntity.getLateTime()!=null){
@@ -180,6 +180,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
                 checkEntity.setLeaveStatus(check_status.normal.getStatusNum());
             }
         }else {
+            logger.info("请假状态还有迟到早退的");
             if (checkEntity.getLateTime()!=null&&checkEntity.getEarlyTime()!=null){
                 checkEntity.setOtherStatus(check_status.LateAndEarly.getStatusNum());
             }else if (checkEntity.getLateTime()!=null){
@@ -298,7 +299,9 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
                         .eq(LeaveEntity::getStatus, statusEmum.SUCCESS.getStatusCode())
                         .ge(LeaveEntity::getEndTime,thisTime)
                 );
-
+                if(checkEntity.getEarlyTime()==null&&checkEntity.getLateTime()==null){
+                    checkEntity.setLeaveStatus(check_status.normal.getStatusNum());
+                }
                 //请假情况判断，我不确定正不正确
                 if (leaveEntity!=null){
 

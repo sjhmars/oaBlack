@@ -6,7 +6,7 @@ public enum check_status {
     Early_departure(2,"早退"),
     Late(3,"迟到"),
     LateAndEarly(5,"迟到加早退"),
-    normal(5,"迟到加早退");
+    normal(6,"正常上班");
 
 
     private final Integer statusNum;

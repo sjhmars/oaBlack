@@ -15,5 +15,5 @@ public interface CheckService extends IService<CheckEntity> {
     IPage<CheckEntity> seleAllCheck(CheckDao checkDao);
     IPage<CheckEntity> seleCheckById(CheckDao checkDao);
     IPage<CheckEntity> selectMyCheck(CheckDao checkDao,Authentication authentication);
-    CheckEntity makeUpCheckIn(Authentication authentication, MakeUpCheckDao makeUpCheckDao);
+    CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao);
 }

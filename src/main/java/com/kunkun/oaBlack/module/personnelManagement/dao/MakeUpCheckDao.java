@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MakeUpCheckDao {
-    private LocalDateTime checkStartTime;
-    private LocalDateTime checkEndTime;
+    private long checkStartTime;
+    private long checkEndTime;
     private Integer checkId;
 }
