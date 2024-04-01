@@ -282,6 +282,9 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
         List<CheckEntity> checkEntityList = checkMapper.selectList(new LambdaQueryWrapper<CheckEntity>().eq(CheckEntity::getThisDate,thisTime));
         if (checkEntityList!=null){
             List<CheckEntity> aftwerBalance = checkEntityList.stream().map(checkEntity -> {
+                if(checkEntity.getEarlyTime()==null&&checkEntity.getLateTime()==null){
+                    checkEntity.setLeaveStatus(check_status.normal.getStatusNum());
+                }
                 if (checkEntity.getCheckStartTime() == null || checkEntity.getCheckEndTime() == null){
                     checkEntity.setLeaveStatus(check_status.Absenteeism.getStatusNum());
                 }
@@ -299,9 +302,6 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
                         .eq(LeaveEntity::getStatus, statusEmum.SUCCESS.getStatusCode())
                         .ge(LeaveEntity::getEndTime,thisTime)
                 );
-                if(checkEntity.getEarlyTime()==null&&checkEntity.getLateTime()==null){
-                    checkEntity.setLeaveStatus(check_status.normal.getStatusNum());
-                }
                 //请假情况判断，我不确定正不正确
                 if (leaveEntity!=null){
 
