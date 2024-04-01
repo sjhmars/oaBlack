@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,7 +169,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             checkEntity.setCheckStartTime(makeUpCheckDao.getCheckEndTime());
             checkEntity.setEarlyTime(null);
         }
-        if (checkEntity.getLeaveStatus()!=check_status.Holiday.getStatusNum()){
+        if (!Objects.equals(checkEntity.getLeaveStatus(), check_status.Holiday.getStatusNum())){
             if (checkEntity.getLateTime()!=null&&checkEntity.getEarlyTime()!=null){
                 checkEntity.setLeaveStatus(check_status.LateAndEarly.getStatusNum());
             }else if (checkEntity.getLateTime()!=null){
