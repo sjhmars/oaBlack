@@ -94,7 +94,7 @@ public class CheckController {
     }
 
     @ApiOperation("创建补卡代办")
-    @GetMapping("/makeUpCheck")
+    @PostMapping("/makeUpCheck")
     public ResultUtil makeUpCheck(@RequestBody MakeUpCheckDao makeUpCheckDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         SupplementCheckEntity supplementCheckEntity = supplementCheckService.addSupplementCheck(authentication,makeUpCheckDao);
