@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@TableName("SupplementCheckEntity")
+@TableName("supplement_check")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
