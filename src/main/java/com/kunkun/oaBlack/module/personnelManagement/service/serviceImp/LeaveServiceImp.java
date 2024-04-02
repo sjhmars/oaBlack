@@ -64,6 +64,7 @@ public class LeaveServiceImp extends ServiceImpl<LeaveMapper, LeaveEntity> imple
         leaveEntity.setReviewerUserId(leaveDao.getReviewerUserId());
         leaveEntity.setReviewerUserName(ruserEnity.getUserName());
         leaveEntity.setStatus(statusEmum.FILE.getStatusCode());
+        leaveEntity.setCreateTime(new Date());
 
         //计算请假天数
         double difference = (double) (leaveDao.getEndTime() - leaveDao.getBeginTime()) / (24 * 60 * 60 * 1000);

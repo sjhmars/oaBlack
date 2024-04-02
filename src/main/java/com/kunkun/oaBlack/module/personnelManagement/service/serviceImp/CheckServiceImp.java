@@ -154,7 +154,12 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
 
     @Override
     @Transactional
-    public CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao) {
+    public CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao,Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
 
         LocalDateTime startTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
         LocalDateTime endTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckEndTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();

@@ -8,5 +8,4 @@ import org.springframework.security.core.Authentication;
 
 public interface LeaveService extends IService<LeaveEntity> {
     NoticeEntity addLeaveNotice(Authentication authentication, LeaveDao leaveDao);
-
 }

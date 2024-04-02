@@ -88,10 +88,11 @@ public class CheckController {
         return ResultUtil.success("结算成功");
     }
 
-    @ApiOperation("补卡")
+    @ApiOperation("创建补卡代办")
     @GetMapping("/makeUpCheck")
     public ResultUtil makeUpCheck(@RequestBody MakeUpCheckDao makeUpCheckDao){
-        CheckEntity checkEntity = checkService.makeUpCheckIn(makeUpCheckDao);
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        CheckEntity checkEntity = checkService.makeUpCheckIn(makeUpCheckDao,authentication);
         if (ObjectUtil.isNotNull(checkEntity)){
             return ResultUtil.success("你成功啦",checkEntity);
         }

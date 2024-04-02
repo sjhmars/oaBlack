@@ -13,4 +13,6 @@ public class MakeUpCheckDao {
     private long checkStartTime;
     private long checkEndTime;
     private Integer checkId;
+    private String reason_content;
+    private Integer reviewerUserId;
 }
