@@ -19,8 +19,11 @@ public class SupplementCheckEntity {
     @TableId(value = "supplement_id",type = IdType.AUTO)
     private Integer supplementId;
 
-    @TableField("check_time")
-    private LocalDateTime checkTime;
+    @TableField("check_start_time")
+    private LocalDateTime checkStartTime;
+
+    @TableField("check_end_time")
+    private LocalDateTime checkEndTime;
 
     @TableField("reason_content")
     private String reasonContent;

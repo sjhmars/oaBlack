@@ -8,7 +8,9 @@ import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.MakeUpCheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.SupplementCheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
+import com.kunkun.oaBlack.module.personnelManagement.service.SupplementCheckService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class CheckController {
 
     @Autowired
     private CheckService checkService;
+
+    @Autowired
+    private SupplementCheckService supplementCheckService;
 
     @ApiOperation("打卡")
     @PostMapping("/checkIn")
@@ -92,9 +97,9 @@ public class CheckController {
     @GetMapping("/makeUpCheck")
     public ResultUtil makeUpCheck(@RequestBody MakeUpCheckDao makeUpCheckDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        CheckEntity checkEntity = checkService.makeUpCheckIn(makeUpCheckDao,authentication);
-        if (ObjectUtil.isNotNull(checkEntity)){
-            return ResultUtil.success("你成功啦",checkEntity);
+        SupplementCheckEntity supplementCheckEntity = supplementCheckService.addSupplementCheck(authentication,makeUpCheckDao);
+        if (ObjectUtil.isNotNull(supplementCheckEntity)){
+            return ResultUtil.success("你成功啦",supplementCheckEntity);
         }
         return ResultUtil.faile("失败了");
     }

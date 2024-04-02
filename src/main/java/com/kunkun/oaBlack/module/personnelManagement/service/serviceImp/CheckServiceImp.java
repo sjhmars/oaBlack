@@ -13,6 +13,7 @@ import com.kunkun.oaBlack.module.personnelManagement.emum.check_status;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.LeaveEntity;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.SupplementCheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.UserEnity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.CheckMapper;
 import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
@@ -154,23 +155,15 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
 
     @Override
     @Transactional
-    public CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao,Authentication authentication) {
-        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
-        String tokenValue = details.getTokenValue();
-        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
-        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+    public CheckEntity makeUpCheckIn(SupplementCheckEntity supplementCheckEntity) {
 
-
-        LocalDateTime startTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
-        LocalDateTime endTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckEndTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
-
-        CheckEntity checkEntity = checkMapper.selectById(makeUpCheckDao.getCheckId());
-        if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckStartTime())){
-            checkEntity.setCheckStartTime(startTime);
+        CheckEntity checkEntity = checkMapper.selectById(supplementCheckEntity.getCheckId());
+        if (ObjectUtil.isNotNull(supplementCheckEntity.getCheckStartTime())){
+            checkEntity.setCheckStartTime(supplementCheckEntity.getCheckStartTime());
             checkEntity.setLateTime(null);
         }
-        if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckEndTime())){
-            checkEntity.setCheckStartTime(endTime);
+        if (ObjectUtil.isNotNull(supplementCheckEntity.getCheckEndTime())){
+            checkEntity.setCheckStartTime(supplementCheckEntity.getCheckEndTime());
             checkEntity.setEarlyTime(null);
         }
         if (!Objects.equals(checkEntity.getLeaveStatus(), check_status.Holiday.getStatusNum())){

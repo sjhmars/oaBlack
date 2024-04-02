@@ -6,9 +6,12 @@ import com.kunkun.oaBlack.module.personnelManagement.emum.NoticeType;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.LeaveEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.SupplementCheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.NoticeMapper;
+import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
 import com.kunkun.oaBlack.module.personnelManagement.service.LeaveService;
 import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
+import com.kunkun.oaBlack.module.personnelManagement.service.SupplementCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
 
     @Autowired
     private LeaveService leaveService;
+
+    @Autowired
+    private SupplementCheckService supplementCheckService;
+
+    @Autowired
+    private CheckService checkService;
 
     @Override
     @Transactional
@@ -55,15 +64,27 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
                     return null;
                 }
             }
+            if (noticeEntity.getNoticeType().equals(NoticeType.cardReplacement.getTypeCode())){
+                SupplementCheckEntity supplementCheckEntity = supplementCheckService.getById(noticeEntity.getEntityId());
+                supplementCheckEntity.setStatus(statusEmum.SUCCESS.getStatusCode());
+                if (supplementCheckService.update(supplementCheckEntity,new LambdaUpdateWrapper<SupplementCheckEntity>().eq(SupplementCheckEntity::getSupplementId,supplementCheckEntity.getSupplementId()))){
+                    checkService.makeUpCheckIn(supplementCheckEntity);
+                    logger.info("补卡成功");
+                }
+                else {
+                    return null;
+                }
+            }
             noticeEntity.setOperationStatus(statusEmum.SUCCESS.getStatusCode());
             noticeEntity.setNoticeContent(noticeContent);
             row = noticeMapper.update(noticeEntity,new LambdaUpdateWrapper<NoticeEntity>()
                     .eq(NoticeEntity::getNoticeId,noticeId)
                     .eq(NoticeEntity::getIsDelete,0)
             );
-            if (row>0)
+            if (row>0){
                 logger.info("审批通过成功");
                 return noticeEntity;
+            }
         }
         return null;
     }

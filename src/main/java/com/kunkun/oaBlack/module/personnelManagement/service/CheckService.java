@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.kunkun.oaBlack.module.personnelManagement.dao.CheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.MakeUpCheckDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.CheckEntity;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.SupplementCheckEntity;
 import org.springframework.security.core.Authentication;
 
 public interface CheckService extends IService<CheckEntity> {
@@ -15,5 +16,5 @@ public interface CheckService extends IService<CheckEntity> {
     IPage<CheckEntity> seleAllCheck(CheckDao checkDao);
     IPage<CheckEntity> seleCheckById(CheckDao checkDao);
     IPage<CheckEntity> selectMyCheck(CheckDao checkDao,Authentication authentication);
-    CheckEntity makeUpCheckIn(MakeUpCheckDao makeUpCheckDao,Authentication authentication);
+    CheckEntity makeUpCheckIn(SupplementCheckEntity supplementCheckEntity);
 }
