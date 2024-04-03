@@ -60,7 +60,7 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
         Date thisDate = new Date();
         int row;
         if (thisDate.getTime()>noticeEntity.getEndTime().getTime()){
-            noticeEntity.setOperationStatus(statusEmum.FILE.getStatusCode());
+            noticeEntity.setOperationStatus(statusEmum.AUDITINGFILE.getStatusCode());
             noticeEntity.setNoticeContent("已过期，无法同意");
             row = noticeMapper.update(noticeEntity,new LambdaUpdateWrapper<NoticeEntity>()
                     .eq(NoticeEntity::getNoticeId,noticeId)
