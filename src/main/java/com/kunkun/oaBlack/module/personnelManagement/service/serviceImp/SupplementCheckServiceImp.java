@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public class SupplementCheckServiceImp extends ServiceImpl<SupplementCheckMapper
     private TokenStore jwtTokenStore;
 
     @Override
+    @Transactional
     public SupplementCheckEntity addSupplementCheck(Authentication authentication, MakeUpCheckDao makeUpCheckDao) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();

@@ -1,7 +1,11 @@
 package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kunkun.oaBlack.module.personnelManagement.dao.NoticePageDao;
 import com.kunkun.oaBlack.module.personnelManagement.emum.NoticeType;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.LeaveEntity;
@@ -12,6 +16,8 @@ import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
 import com.kunkun.oaBlack.module.personnelManagement.service.LeaveService;
 import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
 import com.kunkun.oaBlack.module.personnelManagement.service.SupplementCheckService;
+import com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo;
+import com.kunkun.oaBlack.module.personnelManagement.vo.NoticeVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> implements NoticeService {
@@ -88,4 +97,41 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
         }
         return null;
     }
+
+    @Override
+    public IPage<NoticeVo> selectNoticeAuditingPage(NoticePageDao noticePageDao) {
+        if (noticePageDao.getPageSize() == null){
+            noticePageDao.setPageSize(10);
+        }
+        Page<NoticeEntity> page = new Page<>(noticePageDao.getPageNumber(),noticePageDao.getPageSize());
+        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>().eq(NoticeEntity::getRecipientUserId,noticePageDao.getUserId()));
+        List<NoticeEntity> noticeEntities = noticeEntityIPage.getRecords();
+        List<NoticeVo> noticeVos = noticeEntities.stream().map(noticeEntity -> {
+            NoticeVo noticeVo = new NoticeVo();
+            noticeVo.setNoticeId(noticeEntity.getNoticeId());
+            noticeVo.setCreateTime(noticeEntity.getCreateTime());
+            noticeVo.setEndTime(noticeEntity.getEndTime());
+            noticeVo.setEntityId(noticeEntity.getEntityId());
+            noticeVo.setNoticeContent(noticeEntity.getNoticeContent());
+            noticeVo.setNoticeTitle(noticeEntity.getNoticeTitle());
+            noticeVo.setNoticeType(noticeEntity.getNoticeType());
+            if (noticeVo.getNoticeType().equals(NoticeType.holidayReview.getTypeCode())){
+                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+            }
+            if (noticeVo.getNoticeType().equals(NoticeType.cardReplacement.getTypeCode())){
+                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+            }
+            noticeVo.setOperationStatus(noticeEntity.getOperationStatus());
+            return noticeVo;
+        }).collect(Collectors.toList());
+        IPage<NoticeVo> noticeVoIPage = new Page<>();
+        noticeVoIPage.setCurrent(noticeEntityIPage.getCurrent());
+        noticeVoIPage.setRecords(noticeVos);
+        noticeVoIPage.setPages(noticeEntityIPage.getPages());
+        noticeVoIPage.setSize(noticeEntityIPage.getSize());
+        noticeVoIPage.setTotal(noticeEntityIPage.getTotal());
+        return noticeVoIPage;
+    }
+
+
 }

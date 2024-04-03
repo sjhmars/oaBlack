@@ -2,6 +2,7 @@ package com.kunkun.oaBlack.module.personnelManagement.controller;
 
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.NoticeDao;
+import com.kunkun.oaBlack.module.personnelManagement.dao.NoticePageDao;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
 import io.swagger.annotations.Api;
@@ -28,5 +29,11 @@ public class NoticeController {
             return ResultUtil.success("通过成功",noticeEntity);
         }
         return ResultUtil.faile("原因看log");
+    }
+
+    @ApiOperation("审批代办")
+    @PostMapping("/selectNoticeAuditingList")
+    public ResultUtil selectNoticeAuditingList(@RequestBody NoticePageDao noticePageDao){
+        return ResultUtil.success(noticeService.selectNoticeAuditingPage(noticePageDao));
     }
 }
