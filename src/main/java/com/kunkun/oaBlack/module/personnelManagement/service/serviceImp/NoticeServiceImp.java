@@ -21,6 +21,10 @@ import com.kunkun.oaBlack.module.personnelManagement.vo.NoticeVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +49,9 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
 
     @Autowired
     private CheckService checkService;
+
+    @Autowired
+    private TokenStore jwtTokenStore;
 
     @Override
     @Transactional
@@ -105,6 +112,46 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
         }
         Page<NoticeEntity> page = new Page<>(noticePageDao.getPageNumber(),noticePageDao.getPageSize());
         IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>().eq(NoticeEntity::getRecipientUserId,noticePageDao.getUserId()));
+        List<NoticeEntity> noticeEntities = noticeEntityIPage.getRecords();
+        List<NoticeVo> noticeVos = noticeEntities.stream().map(noticeEntity -> {
+            NoticeVo noticeVo = new NoticeVo();
+            noticeVo.setNoticeId(noticeEntity.getNoticeId());
+            noticeVo.setCreateTime(noticeEntity.getCreateTime());
+            noticeVo.setEndTime(noticeEntity.getEndTime());
+            noticeVo.setEntityId(noticeEntity.getEntityId());
+            noticeVo.setNoticeContent(noticeEntity.getNoticeContent());
+            noticeVo.setNoticeTitle(noticeEntity.getNoticeTitle());
+            noticeVo.setNoticeType(noticeEntity.getNoticeType());
+            if (noticeVo.getNoticeType().equals(NoticeType.holidayReview.getTypeCode())){
+                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+            }
+            if (noticeVo.getNoticeType().equals(NoticeType.cardReplacement.getTypeCode())){
+                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+            }
+            noticeVo.setOperationStatus(noticeEntity.getOperationStatus());
+            return noticeVo;
+        }).collect(Collectors.toList());
+        IPage<NoticeVo> noticeVoIPage = new Page<>();
+        noticeVoIPage.setCurrent(noticeEntityIPage.getCurrent());
+        noticeVoIPage.setRecords(noticeVos);
+        noticeVoIPage.setPages(noticeEntityIPage.getPages());
+        noticeVoIPage.setSize(noticeEntityIPage.getSize());
+        noticeVoIPage.setTotal(noticeEntityIPage.getTotal());
+        return noticeVoIPage;
+    }
+
+    @Override
+    public IPage<NoticeVo> selectNoticeApplicationPage(Authentication authentication,NoticePageDao noticePageDao) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
+        if (noticePageDao.getPageSize() == null){
+            noticePageDao.setPageSize(10);
+        }
+        Page<NoticeEntity> page = new Page<>(noticePageDao.getPageNumber(),noticePageDao.getPageSize());
+        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>().eq(NoticeEntity::getSendUserId,userId));
         List<NoticeEntity> noticeEntities = noticeEntityIPage.getRecords();
         List<NoticeVo> noticeVos = noticeEntities.stream().map(noticeEntity -> {
             NoticeVo noticeVo = new NoticeVo();

@@ -8,6 +8,8 @@ import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,12 @@ public class NoticeController {
     @PostMapping("/selectNoticeAuditingList")
     public ResultUtil selectNoticeAuditingList(@RequestBody NoticePageDao noticePageDao){
         return ResultUtil.success(noticeService.selectNoticeAuditingPage(noticePageDao));
+    }
+
+    @ApiOperation("申请代办")
+    @PostMapping("/selectNoticeApplicationList")
+    public ResultUtil selectNoticeApplicationList(@RequestBody NoticePageDao noticePageDao){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return ResultUtil.success(noticeService.selectNoticeApplicationPage(authentication,noticePageDao));
     }
 }
