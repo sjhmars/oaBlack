@@ -1,8 +1,11 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddBookDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.MeetingDao;
+import com.kunkun.oaBlack.module.personnelManagement.emum.book_status;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.BookEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.MeetingEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.BookService;
@@ -79,5 +82,17 @@ public class MeetingController {
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         List<MeetingListVo> meetingListVos = meetingService.selectAMyList(authentication);
         return ResultUtil.success("查询成功",meetingListVos);
+    }
+
+    @ApiOperation("取消预约")
+    @PostMapping("/cancelReservation")
+    public ResultUtil cancelReservation(Integer bookId){
+        if (bookService.update(new LambdaUpdateWrapper<BookEntity>()
+                .eq(BookEntity::getBookId,bookId)
+                .set(BookEntity::getStatus, book_status.AUDITINGFILE.getStatusCode())
+        )){
+            return ResultUtil.success("取消成功");
+        }
+        return ResultUtil.faile("取消失败");
     }
 }
