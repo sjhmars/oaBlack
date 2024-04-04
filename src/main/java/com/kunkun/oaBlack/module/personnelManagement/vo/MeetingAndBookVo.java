@@ -1,35 +1,47 @@
-package com.kunkun.oaBlack.module.personnelManagement.enitly;
+package com.kunkun.oaBlack.module.personnelManagement.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("t_meeting")
-public class MeetingEntity {
+public class MeetingAndBookVo {
 
-    @TableId(value = "room_id",type = IdType.AUTO)
+
     private Integer roomId;
 
-    @TableField("room_size")
     private Integer roomSize;
 
-    @TableField("room_name")
     private String roomName;
 
-    @TableField("room_floor")
     private int roomFloor;
 
-    @TableField("room_identifier")
     private String roomIdentifier;
 
-    @TableField("is_delete")
-    private Integer isDelete;
+    private Integer bookId;
 
+    private Date bookStartTime;
+
+    private Date bookEndTime;
+
+    private Integer createUserId;
+
+    private String createUserName;
+
+    private Integer status;
+
+    private String reviewerUserName;
+
+    private String meetingTitle;
+
+    private String meetingDetails;
+
+    private String membersIds;
 }

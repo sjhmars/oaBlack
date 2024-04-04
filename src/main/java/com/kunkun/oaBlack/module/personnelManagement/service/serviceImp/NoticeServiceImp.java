@@ -8,14 +8,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.NoticePageDao;
 import com.kunkun.oaBlack.module.personnelManagement.emum.NoticeType;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
+import com.kunkun.oaBlack.module.personnelManagement.enitly.BookEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.LeaveEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.SupplementCheckEntity;
 import com.kunkun.oaBlack.module.personnelManagement.mapper.NoticeMapper;
-import com.kunkun.oaBlack.module.personnelManagement.service.CheckService;
-import com.kunkun.oaBlack.module.personnelManagement.service.LeaveService;
-import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
-import com.kunkun.oaBlack.module.personnelManagement.service.SupplementCheckService;
+import com.kunkun.oaBlack.module.personnelManagement.service.*;
 import com.kunkun.oaBlack.module.personnelManagement.vo.AllWageVo;
 import com.kunkun.oaBlack.module.personnelManagement.vo.NoticeVo;
 import org.slf4j.Logger;
@@ -49,6 +47,9 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
 
     @Autowired
     private CheckService checkService;
+
+    @Autowired
+    private BookService bookService;
 
     @Autowired
     private TokenStore jwtTokenStore;
@@ -91,6 +92,16 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
                     return null;
                 }
             }
+            if (noticeEntity.getNoticeType().equals(NoticeType.meetingApplication.getTypeCode())){
+                BookEntity bookEntity = bookService.getById(noticeEntity.getEntityId());
+                bookEntity.setStatus(statusEmum.SUCCESS.getStatusCode());
+                if (bookService.update(bookEntity,new LambdaUpdateWrapper<BookEntity>().eq(BookEntity::getBookId,bookEntity.getBookId()))){
+                    logger.info("预约成功");
+                }
+                else {
+                    return null;
+                }
+            }
             noticeEntity.setOperationStatus(statusEmum.SUCCESS.getStatusCode());
             noticeEntity.setNoticeContent(noticeContent);
             row = noticeMapper.update(noticeEntity,new LambdaUpdateWrapper<NoticeEntity>()
@@ -126,7 +137,10 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
                 noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
             }
             if (noticeVo.getNoticeType().equals(NoticeType.cardReplacement.getTypeCode())){
-                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+                noticeVo.setEntity(supplementCheckService.getById(noticeVo.getEntityId()));
+            }
+            if (noticeVo.getNoticeType().equals(NoticeType.meetingApplication.getTypeCode())){
+                noticeVo.setEntity(bookService.getById(noticeVo.getEntityId()));
             }
             noticeVo.setOperationStatus(noticeEntity.getOperationStatus());
             return noticeVo;
