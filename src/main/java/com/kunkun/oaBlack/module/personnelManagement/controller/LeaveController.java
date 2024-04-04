@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/leave")
-@Api("请假模块")
+@Api(tags = "请假模块")
 public class LeaveController {
 
     @Autowired

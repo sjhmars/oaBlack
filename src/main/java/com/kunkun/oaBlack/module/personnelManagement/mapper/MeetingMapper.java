@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface MettingMapper extends BaseMapper<MeetingEntity> {
+public interface MeetingMapper extends BaseMapper<MeetingEntity> {
 }
