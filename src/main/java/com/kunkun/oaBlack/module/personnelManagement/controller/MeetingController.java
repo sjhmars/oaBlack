@@ -57,9 +57,9 @@ public class MeetingController {
 
         NoticeEntity noticeEntity = bookService.addBook(addBookDao,authentication);
         if (noticeEntity != null){
-            return ResultUtil.success("预约成功",noticeEntity);
+            return ResultUtil.success("发起预约成功",noticeEntity);
         }
-        return ResultUtil.faile("预约失败");
+        return ResultUtil.faile("发起预约失败");
     }
 
     @ApiOperation("会议室列表")

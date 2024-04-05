@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.NoticePageDao;
 import com.kunkun.oaBlack.module.personnelManagement.emum.NoticeType;
 import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
@@ -202,6 +203,44 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
         Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
 
         return noticeMapper.selectNoReadNum(userId);
+    }
+
+    @Override
+    public Integer selectNoReadNoticeD(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
+        return noticeMapper.selectNoReadNumD(userId);
+    }
+
+    @Override
+    public ResultUtil clickS(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+        if (this.update(new LambdaUpdateWrapper<NoticeEntity>()
+                .eq(NoticeEntity::getRecipientUserId,userId)
+                .set(NoticeEntity::getStatus,statusEmum.SUCCESS.getStatusCode())
+        ))
+        return ResultUtil.success("点击成功");
+        return ResultUtil.faile("消除红点失败");
+    }
+
+    @Override
+    public ResultUtil clickD(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+        if (this.update(new LambdaUpdateWrapper<NoticeEntity>()
+                .eq(NoticeEntity::getSendUserId,userId)
+                .set(NoticeEntity::getStatus,statusEmum.SUCCESS.getStatusCode())
+        ))
+            return ResultUtil.success("点击成功");
+        return ResultUtil.faile("消除红点失败");
     }
 
 

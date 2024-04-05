@@ -65,4 +65,25 @@ public class NoticeController {
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return ResultUtil.success(noticeService.selectNoReadNotice(authentication));
     }
+
+    @ApiOperation("未查看申请代办事件数量")
+    @GetMapping("/selectNumOfSendUserS")
+    public ResultUtil selectNumOfSendUserS(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return ResultUtil.success(noticeService.selectNoReadNoticeD(authentication));
+    }
+
+    @ApiOperation("消除申请代办数量红点")
+    @GetMapping("/clickS")
+    public ResultUtil clickS(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return noticeService.clickS(authentication);
+    }
+
+    @ApiOperation("消除代办数量红点")
+    @GetMapping("/clickD")
+    public ResultUtil clickD(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return noticeService.clickD(authentication);
+    }
 }
