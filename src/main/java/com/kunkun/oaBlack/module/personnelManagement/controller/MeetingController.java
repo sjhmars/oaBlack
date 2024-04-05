@@ -76,6 +76,13 @@ public class MeetingController {
         return ResultUtil.success("查询成功",meetingListVos);
     }
 
+    @ApiOperation("会议预约时间表")
+    @GetMapping("/selectMeetingListId")
+    public ResultUtil selectMeetingListId(@RequestBody Integer roomId){
+        MeetingListVo meetingListVo = meetingService.selectAllListById(roomId);
+        return ResultUtil.success("查询成功",meetingListVo);
+    }
+
     @ApiOperation("我预约的会议列表")
     @GetMapping("/selectMyMeetingList")
     public ResultUtil selectMyMeetingList(){

@@ -17,5 +17,7 @@ public interface MeetingService extends IService<MeetingEntity> {
 
     List<MeetingListVo> selectAllList();
 
+    MeetingListVo selectAllListById(Integer roomId);
+
     List<MeetingListVo> selectAMyList(Authentication authentication);
 }

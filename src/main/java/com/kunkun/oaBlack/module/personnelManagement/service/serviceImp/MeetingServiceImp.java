@@ -95,6 +95,28 @@ public class MeetingServiceImp extends ServiceImpl<MeetingMapper, MeetingEntity>
     }
 
     @Override
+    public MeetingListVo selectAllListById(Integer roomId) {
+        Date firstDay = getMonthFirst().getTime();
+        Date endDay = getMonthEnd().getTime();
+
+        MeetingEntity meetingEntity = meetingMapper.selectById(roomId);
+        MeetingListVo meetingListVo = new MeetingListVo();
+        meetingListVo.setRoomId(meetingEntity.getRoomId());
+        meetingListVo.setRoomFloor(meetingEntity.getRoomFloor());
+        meetingListVo.setRoomIdentifier(meetingEntity.getRoomIdentifier());
+        meetingListVo.setRoomName(meetingEntity.getRoomName());
+        meetingListVo.setRoomSize(meetingEntity.getRoomSize());
+        List<BookEntity> bookEntities = bookMapper.selectList(new LambdaQueryWrapper<BookEntity>()
+                .eq(BookEntity::getRoomId,meetingEntity.getRoomId())
+                .ge(BookEntity::getBookStartTime,firstDay)
+                .le(BookEntity::getBookEndTime,endDay)
+                .eq(BookEntity::getStatus, book_status.SUCCESS.getStatusCode())
+        );
+        meetingListVo.setBookEntities(bookEntities);
+        return meetingListVo;
+    }
+
+    @Override
     public List<MeetingListVo> selectAMyList(Authentication authentication) {
         OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
         String tokenValue = details.getTokenValue();
