@@ -123,7 +123,10 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
             noticePageDao.setPageSize(10);
         }
         Page<NoticeEntity> page = new Page<>(noticePageDao.getPageNumber(),noticePageDao.getPageSize());
-        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>().eq(NoticeEntity::getRecipientUserId,noticePageDao.getUserId()));
+        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>()
+                .eq(NoticeEntity::getRecipientUserId,noticePageDao.getUserId())
+                .orderByDesc(NoticeEntity::getCreateTime)
+        );
         List<NoticeEntity> noticeEntities = noticeEntityIPage.getRecords();
         List<NoticeVo> noticeVos = noticeEntities.stream().map(noticeEntity -> {
             NoticeVo noticeVo = new NoticeVo();
@@ -166,7 +169,10 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
             noticePageDao.setPageSize(10);
         }
         Page<NoticeEntity> page = new Page<>(noticePageDao.getPageNumber(),noticePageDao.getPageSize());
-        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>().eq(NoticeEntity::getSendUserId,userId));
+        IPage<NoticeEntity> noticeEntityIPage = noticeMapper.selectPage(page,new LambdaQueryWrapper<NoticeEntity>()
+                .eq(NoticeEntity::getSendUserId,userId)
+                .orderByDesc(NoticeEntity::getCreateTime)
+        );
         List<NoticeEntity> noticeEntities = noticeEntityIPage.getRecords();
         List<NoticeVo> noticeVos = noticeEntities.stream().map(noticeEntity -> {
             NoticeVo noticeVo = new NoticeVo();
@@ -181,7 +187,10 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
                 noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
             }
             if (noticeVo.getNoticeType().equals(NoticeType.cardReplacement.getTypeCode())){
-                noticeVo.setEntity(leaveService.getById(noticeVo.getEntityId()));
+                noticeVo.setEntity(supplementCheckService.getById(noticeVo.getEntityId()));
+            }
+            if (noticeVo.getNoticeType().equals(NoticeType.meetingApplication.getTypeCode())){
+                noticeVo.setEntity(bookService.getById(noticeVo.getEntityId()));
             }
             noticeVo.setOperationStatus(noticeEntity.getOperationStatus());
             return noticeVo;
