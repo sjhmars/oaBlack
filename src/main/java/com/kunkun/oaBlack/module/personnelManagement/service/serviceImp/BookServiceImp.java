@@ -2,6 +2,7 @@ package com.kunkun.oaBlack.module.personnelManagement.service.serviceImp;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kunkun.oaBlack.module.personnelManagement.dao.AddBookDao;
 import com.kunkun.oaBlack.module.personnelManagement.emum.NoticeType;
@@ -56,16 +57,18 @@ public class BookServiceImp extends ServiceImpl<BookMapper, BookEntity> implemen
         UserEnity ruserEnity = personUserService.selectByIdMy(bookDao.getReviewerUserId());
 
         List<BookEntity> bookEntities = bookMapper.selectList(new LambdaQueryWrapper<BookEntity>()
-                .ge(BookEntity::getBookStartTime,bookDao.getBookStartTime())
-                .le(BookEntity::getBookEndTime,bookDao.getBookEndTime())
+                .ge(BookEntity::getBookStartTime,new Date(bookDao.getBookStartTime()))
+                .le(BookEntity::getBookEndTime,new Date(bookDao.getBookEndTime()))
                 .eq(BookEntity::getStatus,book_status.SUCCESS.getStatusCode())
         );
+
+
         int bookRow = -1;
         int noticeRow = -1;
         NoticeEntity noticeEntity = new NoticeEntity();
 
 
-        if (bookEntities == null){
+        if (CollectionUtils.isEmpty(bookEntities)){
             BookEntity bookEntity = new BookEntity();
             bookEntity.setBookStartTime(new Date(bookDao.getBookStartTime()));
             bookEntity.setBookEndTime(new Date(bookDao.getBookEndTime()));

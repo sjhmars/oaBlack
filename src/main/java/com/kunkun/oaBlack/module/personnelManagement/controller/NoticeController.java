@@ -1,8 +1,11 @@
 package com.kunkun.oaBlack.module.personnelManagement.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.kunkun.oaBlack.common.util.ResultUtil;
 import com.kunkun.oaBlack.module.personnelManagement.dao.NoticeDao;
 import com.kunkun.oaBlack.module.personnelManagement.dao.NoticePageDao;
+import com.kunkun.oaBlack.module.personnelManagement.emum.statusEmum;
 import com.kunkun.oaBlack.module.personnelManagement.enitly.NoticeEntity;
 import com.kunkun.oaBlack.module.personnelManagement.service.NoticeService;
 import io.swagger.annotations.Api;
@@ -10,10 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/notice")
@@ -33,16 +33,36 @@ public class NoticeController {
         return ResultUtil.faile("原因看log");
     }
 
-    @ApiOperation("审批代办")
+    @ApiOperation("拒绝代办")
+    @PostMapping("/refuse")
+    public ResultUtil refuse(@RequestBody NoticeDao noticeDao){
+        if (noticeService.update(new LambdaUpdateWrapper<NoticeEntity>()
+                .eq(NoticeEntity::getNoticeId,noticeDao.getNoticeId())
+                .set(NoticeEntity::getOperationStatus, statusEmum.AUDITINGFILE.getStatusCode())
+        )){
+            return ResultUtil.success("拒绝成功");
+        }
+        return ResultUtil.faile("拒绝失败");
+    }
+
+
+    @ApiOperation("审批代办列表")
     @PostMapping("/selectNoticeAuditingList")
     public ResultUtil selectNoticeAuditingList(@RequestBody NoticePageDao noticePageDao){
         return ResultUtil.success(noticeService.selectNoticeAuditingPage(noticePageDao));
     }
 
-    @ApiOperation("申请代办")
+    @ApiOperation("申请代办列表")
     @PostMapping("/selectNoticeApplicationList")
     public ResultUtil selectNoticeApplicationList(@RequestBody NoticePageDao noticePageDao){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return ResultUtil.success(noticeService.selectNoticeApplicationPage(authentication,noticePageDao));
+    }
+
+    @ApiOperation("未查看代办事件数量")
+    @GetMapping("/selectNumOfSendUser")
+    public ResultUtil selectNumOfSendUser(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        return ResultUtil.success(noticeService.selectNoReadNotice(authentication));
     }
 }

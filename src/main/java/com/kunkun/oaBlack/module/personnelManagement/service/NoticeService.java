@@ -13,4 +13,6 @@ public interface NoticeService extends IService<NoticeEntity> {
     IPage<NoticeVo> selectNoticeAuditingPage(NoticePageDao noticePageDao);
 
     IPage<NoticeVo> selectNoticeApplicationPage(Authentication authentication,NoticePageDao noticePageDao);
+
+    Integer selectNoReadNotice(Authentication authentication);
 }

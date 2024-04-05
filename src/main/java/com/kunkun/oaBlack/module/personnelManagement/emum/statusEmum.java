@@ -4,7 +4,7 @@ public enum statusEmum {
 
     SUCCESS(1,"通过"),
     FILE(0,"未通过"),
-    AUDITINGFILE(2,"未通过");
+    AUDITINGFILE(2,"不通过");
 
     private final Integer statusCode;
 

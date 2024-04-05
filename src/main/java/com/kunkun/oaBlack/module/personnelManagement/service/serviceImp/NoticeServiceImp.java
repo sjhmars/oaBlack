@@ -194,5 +194,15 @@ public class NoticeServiceImp extends ServiceImpl<NoticeMapper, NoticeEntity> im
         return noticeVoIPage;
     }
 
+    @Override
+    public Integer selectNoReadNotice(Authentication authentication) {
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = details.getTokenValue();
+        OAuth2AccessToken oAuth2AccessToken = jwtTokenStore.readAccessToken(tokenValue);
+        Integer userId = (Integer) oAuth2AccessToken.getAdditionalInformation().get("userid");
+
+        return noticeMapper.selectNoReadNum(userId);
+    }
+
 
 }
