@@ -77,7 +77,7 @@ public class MeetingController {
     }
 
     @ApiOperation("会议预约时间表")
-    @GetMapping("/selectMeetingListId")
+    @PostMapping("/selectMeetingListId")
     public ResultUtil selectMeetingListId(@RequestBody Integer roomId){
         MeetingListVo meetingListVo = meetingService.selectAllListById(roomId);
         return ResultUtil.success("查询成功",meetingListVo);
