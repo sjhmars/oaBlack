@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.kunkun.oaBlack.common.config.LocalDateTimeConfig;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,9 +22,11 @@ public class SupplementCheckEntity {
     private Integer supplementId;
 
     @TableField("check_start_time")
+    @JsonSerialize(using = LocalDateTimeConfig.LocalDateTimeSerializer.class)
     private LocalDateTime checkStartTime;
 
     @TableField("check_end_time")
+    @JsonSerialize(using = LocalDateTimeConfig.LocalDateTimeSerializer.class)
     private LocalDateTime checkEndTime;
 
     @TableField("reason_content")
