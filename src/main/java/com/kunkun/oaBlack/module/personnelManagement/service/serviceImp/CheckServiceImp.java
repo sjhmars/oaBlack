@@ -163,7 +163,7 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             checkEntity.setLateTime(null);
         }
         if (ObjectUtil.isNotNull(supplementCheckEntity.getCheckEndTime())){
-            checkEntity.setCheckStartTime(supplementCheckEntity.getCheckEndTime());
+            checkEntity.setCheckEndTime(supplementCheckEntity.getCheckEndTime());
             checkEntity.setEarlyTime(null);
         }
         if (!Objects.equals(checkEntity.getLeaveStatus(), check_status.Holiday.getStatusNum())){
@@ -190,6 +190,13 @@ public class CheckServiceImp extends ServiceImpl<CheckMapper, CheckEntity> imple
             }
         }
         int row = checkMapper.updateById(checkEntity);
+        if (checkEntity.getEarlyTime()==null||checkEntity.getLateTime()==null){
+            checkMapper.update(checkEntity,new LambdaUpdateWrapper<CheckEntity>()
+                    .eq(CheckEntity::getCheckId,checkEntity.getCheckId())
+                    .set(CheckEntity::getEarlyTime,checkEntity.getEarlyTime())
+                    .set(CheckEntity::getLateTime,checkEntity.getLateTime())
+            );
+        }
         if (row>0){
             return checkEntity;
         }
