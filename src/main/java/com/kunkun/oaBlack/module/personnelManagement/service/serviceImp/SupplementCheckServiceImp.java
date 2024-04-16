@@ -55,7 +55,7 @@ public class SupplementCheckServiceImp extends ServiceImpl<SupplementCheckMapper
         UserEnity cUser = personUserService.selectByIdMy(userId);
         UserEnity rUser = personUserService.selectByIdMy(makeUpCheckDao.getReviewerUserId());
         SupplementCheckEntity supplementCheckEntity = new SupplementCheckEntity();
-        if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckStartTime())){
+        if (ObjectUtil.isNotEmpty(makeUpCheckDao.getCheckStartTime())){
             LocalDateTime startTime = Instant.ofEpochMilli(makeUpCheckDao.getCheckStartTime()).atZone(ZoneOffset.systemDefault()).toLocalDateTime();
             supplementCheckEntity.setCheckStartTime(startTime);
         }else if (ObjectUtil.isNotNull(makeUpCheckDao.getCheckEndTime())){
